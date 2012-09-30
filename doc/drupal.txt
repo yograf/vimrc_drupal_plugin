@@ -11,7 +11,8 @@
 5. Editing .info files					|drupal-info|
 6. Tag searches for Drupal core				|drupal-tags|
 7. Drupal/PHP omni-completion				|ft-drupal-omni|
-8. Updates and support					|drupal-update|
+8. Coder support					|ft-drupal-coder|
+9. Updates and support					|drupal-update|
 
 The functionality mentioned here is provided by several files.  See the
 installation section.
@@ -286,7 +287,29 @@ to find 15 possible completions, including drupal_send_headers() and
 drupal_set_message().  See |compl-omni|.
 
 ==============================================================================
-8. Updates and support			*drupal-update* *drupal-support*
+8. Coder support			*ft-drupal-coder* *ft-drupal-make*
+
+If you install and enable the Coder module, then it includes a PHP script that
+will correct coding violations, saving the original file as
+<filename>.coder.orig and replacing the file with the corrected one.  The
+vimrc project includes a |:compiler| plugin that invokes the Coder script.  To
+set the compiler, simply >
+	:compiler coder
+and then use the |:make| command: >
+	:make %		" % refers to the current file.
+	:e!		" re-load the updated file.
+	:diffsplit %.coder.orig
+to update the file and compare with the original version in |diff-mode|.  (See
+also |08.7| in the users' manual for an introduction to diff mode.)  After
+setting the compiler, you can also update other files or entire directories: >
+	:make another_file.php
+	:make includes/myfile.inc
+	:make includes/
+	:make .		" . refers to vim's working directory
+	:make %:p:h	" directory of the current file
+
+==============================================================================
+9. Updates and support			*drupal-update* *drupal-support*
 
 For the latest version of this project, see http://drupal.org/project/vimrc .
 To file a bug report or feature request, see the corresponding issues queue:
