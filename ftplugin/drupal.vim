@@ -80,24 +80,25 @@ function s:OpenURL(base)
   if open == ''
     return
   endif
-  let func =  shellescape(expand('<cword>'))
+  " Get the word under the cursor.
+  let func = expand('<cword>')
+  " Some API sites let you specify which Drupal version you want.
+  let core = strlen(b:Drupal_info.CORE) ? b:Drupal_info.CORE . '/' : ''
+  " Custom processing for several API sites.
   if a:base == 'api.d.o'
-    if strlen(b:Drupal_info.CORE)
-      execute '!' . open . ' http://api.drupal.org/api/search/' .
-	    \ b:Drupal_info.CORE . '/' . func
-    else
-      execute '!' . open . ' http://api.drupal.org/' . func
-    endif
+    let url = 'http://api.drupal.org/api/search/' . core
+  elseif a:base == 'hook'
+    let url = 'http://api.drupal.org/api/search/' . core
+    " Find the module or theme name and replace it with 'hook'.
+    let root = expand('%:t:r')
+    let func = substitute(func, '^' . root, 'hook', '')
   elseif a:base == 'drupalcontrib'
-    if strlen(b:Drupal_info.CORE)
-      execute '!' . open . ' http://drupalcontrib.org/api/search/' .
-      \ b:Drupal_info.CORE . '/' . func
-    else
-      execute '!' . open . ' http://drupalcontrib.org/' . func
-    endif
+    let url = 'http://drupalcontrib.org/api/search/' . core
   else
+    let url = a:base
     execute '!' . open . ' ' . a:base . func
   endif
+  call system(open . ' ' . url . shellescape(func))
 endfun
 
 endif " !exists('*s:OpenURL')
@@ -109,6 +110,11 @@ if strlen(b:Drupal_info.OPEN_COMMAND)
   nmap <Plug>DrupalAPI :silent call <SID>OpenURL("api.d.o")<CR><C-L>
   call drupal#CreateMaps('n', 'Drupal API', '<LocalLeader>da', 
 	\ '<Plug>DrupalAPI', s:options)
+
+  " Lookup the API docs for a drupal hook under cursor.
+  nmap <Plug>DrupalHook :silent call <SID>OpenURL('hook')<CR><C-L>
+  call drupal#CreateMaps('n', 'Drupal Hook', '<LocalLeader>dh', 
+	\ '<Plug>DrupalHook', s:options)
 
   " Lookup the API docs for a drush function under cursor.
   nmap <Plug>DrushAPI :silent call <SID>OpenURL("http://api.drush.ws/api/function/")<CR><C-L>

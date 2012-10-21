@@ -230,6 +230,9 @@ The ftplugin file also defines the following buffer-local mappings:
 \dc	Same as \da but use http://drupalcontrib.org/.
 					*drupal-drush-API* *drupal-\dda*
 \dda	Lookup the API docs for a drush function under cursor.
+					*drupal-hook* *drupal-\dh*
+\dh	Lookup the API docs for a hook implemented by the drupal function
+	under the cursor.
 					*drupal-variable* *drupal-\dv*
 \dv	Get the value of the drupal variable under cursor.  (Requires drush.)
 
