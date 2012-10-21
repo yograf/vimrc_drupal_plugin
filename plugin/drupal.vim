@@ -108,6 +108,11 @@ function! s:DrupalInit()
     let INFO_FILE = info.DRUPAL_ROOT . '/modules/system/system.info'
     if filereadable(INFO_FILE)
       let info.CORE = s:CoreVersion(INFO_FILE)
+    else
+      let INFO_FILE = info.DRUPAL_ROOT . '/core/modules/system/system.info'
+      if filereadable(INFO_FILE)
+	let info.CORE = s:CoreVersion(INFO_FILE)
+      endif
     endif
   elseif info.DRUPAL_ROOT == '' && info.CORE != ''  && exists('g:Drupal_dirs')
     let info.DRUPAL_ROOT = get(g:Drupal_dirs, info.CORE, '')
@@ -121,7 +126,7 @@ function! s:DrupalInit()
 endfun
 " }}} }}}
 
-" {{{ @function s:IniType()
+" {{{ @function s:DrupalRoot()
 " Try to guess which part of the path is the Drupal root directory.
 "
 " @param path
@@ -131,30 +136,37 @@ endfun
 "   A string representing the Drupal root, '' if not found.
 " {{{
 function! s:DrupalRoot(path)
-  let markers = ['index.php', 'cron.php', 'modules', 'themes', 'sites']
+  let markers = {}
+  let markers.7 = ['index.php', 'cron.php', 'modules', 'themes', 'sites']
+  let markers.8 = ['index.php', 'core/cron.php', 'core/modules',
+	\ 'core/themes', 'sites']
   " On *nix, start with '', but on Windows typically start with 'C:'.
   let droot = matchstr(a:path, '[^\' . s:slash . ']*')
   for part in split(matchstr(a:path, '\' . s:slash . '.*'), s:slash)
     let droot .= s:slash . part
     " This would be easier if it did not have to work on Windows.
-    let ls = glob(droot . s:slash . '*') . "\<C-J>"
-    let is_drupal_root = 1
-    for marker in markers
-      if match(ls, '\' . s:slash . marker . "\<C-J>") == -1
-	let is_drupal_root = 0
-	break
+    " List everything in droot and droot/core.
+    let dirs = droot . ',' . droot . s:slash . 'core'
+    let ls = globpath(dirs, '*') . "\<C-J>"
+    for marker_list in values(markers)
+      let is_drupal_root = 1
+      for marker in marker_list
+	if match(ls, '\' . s:slash . marker . "\<C-J>") == -1
+	  let is_drupal_root = 0
+	  break
+	endif
+      endfor
+      " If all the markers are there, then this looks like a Drupal root.
+      if is_drupal_root
+	return droot
       endif
     endfor
-    " If all the markers are there, then this looks like a Drupal root.
-    if is_drupal_root
-      return droot
-    endif
   endfor
   return ''
 endfun
 " }}} }}}
 
-" {{{ @function s:IniType()
+" {{{ @function s:InfoPath()
 " Try to find the .info file of the module, theme, etc. containing a path.
 "
 " @param path
