@@ -5,38 +5,12 @@ let php_parent_error_open = 1 "Display error for unmatch brackets
 let PHP_autoformatcomment = 0
 let PHP_removeCRwhenUnix = 1
 
-" Enable syntax highlighting
-if &t_Co > 1
-  syntax enable
-endif
-syntax on
-
-" When in split screen, map <C-LeftArrow> and <C-RightArrow> to switch panes.
-nn [5C <C-W>w
-nn [5R <C-W>W
-
-" Custom key mapping.
-let s:options = {'root': 'Drupal'}
-call drupal#CreateMaps('', 'Redo', 'U', ':redo<CR>', s:options)
-call drupal#CreateMaps('', 'Next tab', '<C-N>', ':tabn<CR>', s:options)
-call drupal#CreateMaps('', 'Prev tab', '<C-P>', ':tabp<CR>', s:options)
-" map <S-u> :redo<cr>
-" map <C-n> :tabn<cr>
-" map <C-p> :tabp<cr>
-let s:options.weight = 510
-call drupal#CreateMaps('', '-Drupal Custom-', '', ':', s:options)
-
 " {{{
 " Everything from here on assumes that autocommands are available.
 " }}}
 if !has("autocmd")
   finish
 endif
-
-" Uncomment the following to have Vim jump to the last position when
-" reopening a file
-au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-      \| exe "normal! g'\"" | endif
 
 augroup Drupal
   " Remove ALL autocommands for the Drupal group.
