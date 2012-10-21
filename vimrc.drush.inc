@@ -203,11 +203,11 @@ function drush_vimrc_install($path = '.') {
   // Now, add a line to the vimrc file. If it is empty, start with the
   // standard one distributed with this script.
   $runcommands = file_get_contents($vimrc);
-  $bundle = realpath('bundle');
+  $bundle = realpath(__DIR__ . '/bundle');
   $call_pathogen = "call pathogen#infect('$bundle')";
   if (strpos($runcommands, $call_pathogen) === FALSE) {
     if (empty($runcommands)) {
-      $runcommands = file_get_contents('examples/vimrc_standard.vim');
+      $runcommands = file_get_contents(__DIR__ . '/examples/vimrc_standard.vim');
     }
     $comment = '" Following line added by drush vimrc-install on ' . date('r');
     drush_log("Rewriting vimrc file $vimrc.");
