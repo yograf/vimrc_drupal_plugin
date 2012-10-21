@@ -15,10 +15,16 @@ syntax on
 nn [5C <C-W>w
 nn [5R <C-W>W
 
-" Custom key mapping
-map <S-u> :redo<cr>
-map <C-n> :tabn<cr>
-map <C-p> :tabp<cr>
+" Custom key mapping.
+let s:options = {'root': 'Drupal'}
+call drupal#CreateMaps('', 'Redo', 'U', ':redo<CR>', s:options)
+call drupal#CreateMaps('', 'Next tab', '<C-N>', ':tabn<CR>', s:options)
+call drupal#CreateMaps('', 'Prev tab', '<C-P>', ':tabp<CR>', s:options)
+" map <S-u> :redo<cr>
+" map <C-n> :tabn<cr>
+" map <C-p> :tabp<cr>
+let s:options.weight = 510
+call drupal#CreateMaps('', '-Drupal Custom-', '', ':', s:options)
 
 " {{{
 " Everything from here on assumes that autocommands are available.
@@ -291,3 +297,20 @@ function! s:DrushComplete(ArgLead, CmdLine, CursorPos) abort" {{{
   return options
 endfun
 " }}} }}}
+
+" {{{ @
+function! s:SetDrupalRoot()
+  let dir = input('Drupal root directory: ', b:Drupal_info.DRUPAL_ROOT, 'file')
+  let b:Drupal_info.DRUPAL_ROOT = expand(substitute(dir, '[/\\]$', '', ''))
+  if strlen(dir)
+    let INFO_FILE = b:Drupal_info.DRUPAL_ROOT . '/modules/system/system.info'
+    if filereadable(INFO_FILE)
+      let b:Drupal_info.CORE = s:CoreVersion(INFO_FILE)
+    endif
+  endif
+endfun
+" }}}
+nmap <Plug>DrupalSetRoot :call <SID>SetDrupalRoot()<CR>
+let s:options = {'root': 'Drupal.Configure', 'weight': '900.'}
+call drupal#CreateMaps('n', 'Set Drupal root', '', '<Plug>DrupalSetRoot', s:options)
+call drupal#CreateMaps('n', 'Show Drupal info', '', ':echo b:Drupal_info<CR>', s:options)
