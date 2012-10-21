@@ -158,22 +158,39 @@ function _vimrc_check_pathogen($vim) {
  */
 function vimrc_vim_command($vim, $command) {
   // TODO:  Does this work on Windows?
-  $escapedcommand = escapeshellcmd($command);
+  $infile = drush_save_data_to_temp_file("$command\nqa!\n");
   $vimlog = drush_tempnam('vimrc');
-  $infile = drush_save_data_to_temp_file("$escapedcommand\nq\n");
   // $lines = exec("echo $escapedcommand | $vim -e -s -V0$vimlog", $output, $retval);
-  exec("$vim -e -s -V0$vimlog < $infile", $output, $retval);
+  exec("$vim -e -s -N -V0$vimlog < $infile", $output, $retval);
   if ($retval > 1) {
     return FALSE;
   }
-  // drush_shell_exec('$vim -e -s -V0%s < %s', $vimlog, $infile);
   $lines = file($vimlog);
   // Remove empty line and 'Entering Ex mode' line.
-  array_shift($lines);
-  array_shift($lines);
-  // Remove 'empty buffer' message and empty line.
+  unset($lines[0], $lines[1]);
+  // Remove 'empty buffer' message and :qa! line.
   array_pop($lines);
   array_pop($lines);
+  return $lines;
+}
+
+/**
+ * Run several vim (ex) commands and return the output.
+ *
+ * The calling function is reponsible for validating that $vim is executable.
+ *
+ * @param String $vim
+ *   The name of the vim executable.
+ * @param Array $commands
+ *   The vim commands to execute.
+ * @return Array
+ *   The output of $command as an array of strings or FALSE on error.
+ */
+function vimrc_vim_commands($vim, $commands) {
+  $command = implode("\n", $commands);
+  drush_print_r($commands);
+  echo "command:\n$command\n--\n";
+  $lines = vimrc_vim_command($vim, $command);
   return $lines;
 }
 
@@ -190,29 +207,37 @@ function drush_vimrc_install($path = '.') {
     // Pathogen is not installed, but the validate function already checked
     // that we can write to the vimfiles directory. Start by downloading
     // pathogen.  See https://github.com/tpope/vim-pathogen.
-    drush_log("Creating directory $vimfiles/autoload.");
+    drush_log(dt('Creating directory %autoload.',
+      array('%autoload' => "$vimfiles/autoload")));
     mkdir("$vimfiles/autoload");
     $url =
       'https://raw.github.com/tpope/vim-pathogen/master/autoload/pathogen.vim';
-    drush_log("Downloading pathogen from $url.");
+    drush_log(dt('Downloading pathogen from %url.', array('%url' => $url)));
     $pathogen = file_get_contents($url);
-    drush_log("Saving it to $vimfiles/autoload/pathogen.vim.");
+    drush_log(dt('Saving it to %pathogen.',
+      array('%pathogen' => "$vimfiles/autoload/pathogen")));
     file_put_contents("$vimfiles/autoload/pathogen.vim", $pathogen);
   }
 
   // Now, add a line to the vimrc file. If it is empty, start with the
   // standard one distributed with this script.
   $runcommands = file_get_contents($vimrc);
-  $bundle = realpath(__DIR__ . '/bundle');
+  // Why do I get a message that __DIR__ is undefined?
+  $DIR = dirname(__FILE__);
+  $bundle = realpath($DIR . '/bundle');
   $call_pathogen = "call pathogen#infect('$bundle')";
   if (strpos($runcommands, $call_pathogen) === FALSE) {
     if (empty($runcommands)) {
-      $runcommands = file_get_contents(__DIR__ . '/examples/vimrc_standard.vim');
+      $runcommands = file_get_contents($DIR . '/examples/vimrc_standard.vim');
     }
     $comment = '" Following line added by drush vimrc-install on ' . date('r');
-    drush_log("Rewriting vimrc file $vimrc.");
+    drush_log(dt('Rewriting vimrc file %vimrc.', array('%vimrc' => $vimrc)));
     file_put_contents($vimrc, "$comment\n$call_pathogen\n\n$runcommands");
   }
+
+  // Update the help tags, using the pathogen variant of :helptags.
+  drush_log(dt('Updating help tags.', array()));
+  $lines = vimrc_vim_command($vim, 'call pathogen#helptags()');
 
   return;
 }
