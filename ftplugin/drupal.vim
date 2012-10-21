@@ -25,10 +25,6 @@ if &ft =~ '\<php\>' && exists('loaded_syntastic_plugin') && executable('phpcs')
 	\ . ' --extensions=php,module,inc,install,test,profile,theme'
 endif
 
-" Custom SVN blame
-let s:options = {'root': 'Drupal', 'special': '<buffer>'}
-call drupal#CreateMaps('v', 'SVN blame', 'gl', ':<C-U>!svn blame <C-R>=expand("%:P") <CR> \| sed -n <C-R>=line("''<") <CR>,<C-R>=line("''>") <CR>p <CR>', s:options)
-
 augroup Drupal
   autocmd! BufEnter <buffer> call s:BufEnter()
 augroup END

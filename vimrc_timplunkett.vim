@@ -51,3 +51,6 @@ if has("autocmd")
  \| exe "normal! g'\"" | endif
 endif
 
+" Custom SVN blame
+vmap gl :<C-U>!svn blame <C-R>=expand("%:P") <CR> \| sed -n <C-R>=line("'<") <CR>,<C-R>=line("'>") <CR>p <CR>
+
