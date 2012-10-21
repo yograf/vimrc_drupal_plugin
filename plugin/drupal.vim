@@ -248,3 +248,46 @@ function! s:IniType(info_path)
   endif
 endfun
 " }}} }}}
+
+" {{{
+" :Drush <subcommand> executes "Drush <subcommand>" and puts the output in a
+" new window. Command-line completion uses the output of "drush --sort --pipe"
+" unless the current argument starts with "@", in which case it uses the
+" output of "drush site-alias".
+command! -nargs=* -complete=custom,s:DrushComplete Drush call s:Drush(<q-args>)
+" {{{
+function! s:Drush(command) abort
+  " Open a new window. It is OK to quit without saving, and :w does nothing.
+  new
+  setlocal buftype=nofile bufhidden=hide noswapfile
+  " Do not wrap long lines and try to handle ANSI escape sequences.
+  setl nowrap
+  " For now, just use the --nocolor option.
+  " if exists(":AnsiEsc") == 2
+    " AnsiEsc
+  " endif
+  " Execute the command and grab the output. Clean it up.
+  " TODO: Does the clean-up work on other OS's?
+  let commandline = 'drush --nocolor ' . a:command
+  let out = system(commandline)
+  let out = substitute(out, '\s*\r', '', 'g')
+  " Add the command and output to our new scratch window.
+  put = '$ ' . commandline
+  put = '==' . substitute(commandline, '.', '=', 'g')
+  put = out
+  " Delete the blank line at the top and stay there.
+  1d
+endfun
+" }}}
+function! s:DrushComplete(ArgLead, CmdLine, CursorPos) abort" {{{
+  let options = ''
+  if a:ArgLead =~ '@\S*$'
+    let site_aliases = system('drush site-alias')
+    let options = site_aliases
+  else
+    let sub_commands = system('drush --sort --pipe')
+    let options = substitute(sub_commands, ' \+', '\n', 'g')
+  endif
+  return options
+endfun
+" }}} }}}
