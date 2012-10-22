@@ -112,7 +112,7 @@ endfun
 function! s:DrupalRoot(path)
   let markers = {}
   let markers.7 = ['index.php', 'cron.php', 'modules', 'themes', 'sites']
-  let markers.8 = ['index.php', 'core/cron.php', 'core/modules',
+  let markers.8 = ['index.php', 'core/authorize.php', 'core/modules',
 	\ 'core/themes', 'sites']
   " On *nix, start with '', but on Windows typically start with 'C:'.
   let droot = matchstr(a:path, '[^\' . s:slash . ']*')
