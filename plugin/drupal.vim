@@ -274,14 +274,21 @@ function! s:Drush(command) abort
   1d
 endfun
 " }}}
+" On Windows, shelling out is slow, so let's cache the results.
+let s:drush_completions = {'command': '', 'alias': ''}
 function! s:DrushComplete(ArgLead, CmdLine, CursorPos) abort" {{{
   let options = ''
   if a:ArgLead =~ '@\S*$'
-    let site_aliases = system('drush site-alias')
-    let options = site_aliases
+    if s:drush_completions.alias == ''
+      let s:drush_completions.alias = system('drush site-alias')
+    endif
+    let options = s:drush_completions.alias
   else
-    let sub_commands = system('drush --sort --pipe')
-    let options = substitute(sub_commands, ' \+', '\n', 'g')
+    if s:drush_completions.command == ''
+      let commands = system('drush --sort --pipe')
+      let s:drush_completions.command = substitute(commands, ' \+', '\n', 'g')
+    endif
+    let options = s:drush_completions.command
   endif
   return options
 endfun
