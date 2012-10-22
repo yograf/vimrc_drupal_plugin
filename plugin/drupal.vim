@@ -261,11 +261,14 @@ function! s:Drush(command) abort
   " Execute the command and grab the output. Clean it up.
   " TODO: Does the clean-up work on other OS's?
   let commandline = 'drush --nocolor ' . a:command
+  let shortcommand = 'drush ' . a:command
+  " Change the status line to list the command instead of '[Scratch]'.
+  let &l:statusline = '%<[' . shortcommand . '] %h%m%r%=%-14.(%l,%c%V%) %P'
   let out = system(commandline)
   let out = substitute(out, '\s*\r', '', 'g')
   " Add the command and output to our new scratch window.
-  put = '$ ' . commandline
-  put = '==' . substitute(commandline, '.', '=', 'g')
+  put = '$ ' . shortcommand
+  put = '==' . substitute(shortcommand, '.', '=', 'g')
   put = out
   " Delete the blank line at the top and stay there.
   1d
