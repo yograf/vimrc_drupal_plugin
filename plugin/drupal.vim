@@ -113,15 +113,19 @@ function! s:DrupalRoot(path)
   " If all the markers are found, assume the directory is the Drupal root.
   " See update_verify_update_archive() for official markers.
   let markers = {}
-  let markers.7 =  ['index.php', 'update.php']
-  call add(markers.7, join(['includes', 'bootstrap.inc'], s:slash))
-  call add(markers.7, join(['modules', 'node', 'node.module'], s:slash))
-  call add(markers.7, join(['modules', 'system', 'system.module'], s:slash))
-  let markers.8 =  ['index.php']
-  call add(markers.8, join(['core', 'update.php'], s:slash))
-  call add(markers.8, join(['core', 'includes', 'bootstrap.inc'], s:slash))
-  call add(markers.8, join(['core', 'modules', 'node', 'node.module'], s:slash))
-  call add(markers.8, join(['core', 'modules', 'system', 'system.module'], s:slash))
+  let markers.7 = [['index.php'], ['update.php']]
+  call add(markers.7, ['includes', 'bootstrap.inc'])
+  call add(markers.7, ['modules', 'node', 'node.module'])
+  call add(markers.7, ['modules', 'system', 'system.module'])
+  let markers.8 = [['index.php']]
+  call add(markers.8, ['core', 'update.php'])
+  call add(markers.8, ['core', 'includes', 'bootstrap.inc'])
+  call add(markers.8, ['core', 'modules', 'node', 'node.module'])
+  call add(markers.8, ['core', 'modules', 'system', 'system.module'])
+  for marker_list in values(markers)
+    call map(marker_list, 'join(v:val, s:slash)')
+  endfor
+  let g:marker_list = marker_list
 
   " On *nix, start with '', but on Windows typically start with 'C:'.
   let path_components = split(a:path, s:slash, 1)
@@ -132,12 +136,12 @@ function! s:DrupalRoot(path)
     for marker_list in values(markers)
       let is_drupal_root = 1
       for marker in marker_list
-	" Since glob() is built in to vim, this should be fast.
-	if glob(droot . s:slash . marker) == ''
+	" Since globpath() is built in to vim, this should be fast.
+	if globpath(droot, marker) == ''
 	  let is_drupal_root = 0
 	  break
 	endif
-      endfor
+      endfor " marker
       " If all the markers are there, then this looks like a Drupal root.
       if is_drupal_root
 	return droot
