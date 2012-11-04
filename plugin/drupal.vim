@@ -110,22 +110,30 @@ endfun
 "   A string representing the Drupal root, '' if not found.
 " {{{
 function! s:DrupalRoot(path)
+  " If all the markers are found, assume the directory is the Drupal root.
+  " See update_verify_update_archive() for official markers.
   let markers = {}
-  let markers.7 = ['index\.php', 'cron\.php', 'modules', 'themes', 'sites']
-  let markers.8 = ['index\.php', 'core[\/]authorize\.php', 'core[\/]modules',
-	\ 'core[\/]themes', 'sites']
+  let markers.7 =  ['index.php', 'update.php']
+  call add(markers.7, join(['includes', 'bootstrap.inc'], s:slash))
+  call add(markers.7, join(['modules', 'node', 'node.module'], s:slash))
+  call add(markers.7, join(['modules', 'system', 'system.module'], s:slash))
+  let markers.8 =  ['index.php']
+  call add(markers.8, join(['core', 'update.php'], s:slash))
+  call add(markers.8, join(['core', 'includes', 'bootstrap.inc'], s:slash))
+  call add(markers.8, join(['core', 'modules', 'node', 'node.module'], s:slash))
+  call add(markers.8, join(['core', 'modules', 'system', 'system.module'], s:slash))
+
   " On *nix, start with '', but on Windows typically start with 'C:'.
-  let droot = matchstr(a:path, '[^\' . s:slash . ']*')
-  for part in split(matchstr(a:path, '\' . s:slash . '.*'), s:slash)
+  let path_components = split(a:path, s:slash, 1)
+  let droot = remove(path_components, 0)
+
+  for part in path_components
     let droot .= s:slash . part
-    " This would be easier if it did not have to work on Windows.
-    " List everything in droot and droot/core.
-    let dirs = droot . ',' . droot . s:slash . 'core'
-    let ls = globpath(dirs, '*') . "\<C-J>"
     for marker_list in values(markers)
       let is_drupal_root = 1
       for marker in marker_list
-	if match(ls, '\' . s:slash . marker . "\<C-J>") == -1
+	" Since glob() is built in to vim, this should be fast.
+	if glob(droot . s:slash . marker) == ''
 	  let is_drupal_root = 0
 	  break
 	endif
@@ -134,8 +142,8 @@ function! s:DrupalRoot(path)
       if is_drupal_root
 	return droot
       endif
-    endfor
-  endfor
+    endfor " marker_list
+  endfor " part
   return ''
 endfun
 " }}} }}}
