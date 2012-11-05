@@ -245,7 +245,7 @@ function drush_vimrc_install($path = '.') {
 /**
  * Implements drush_hook_COMMAND_validate().
  */
-function drush_vimrc_vimrc_tag_gen_validate() {
+function drush_vimrc_tag_gen_validate() {
   // Bail out if ctags is not executable or is not the right version.
   $ctags = drush_get_option('ctags', 'ctags');
   $ctags = escapeshellcmd($ctags);
@@ -255,8 +255,8 @@ function drush_vimrc_vimrc_tag_gen_validate() {
   }
   // Check that the tags file is writable.
   $tag_file = drush_get_option('tag-file', 'tags');
-  $tag_file = realpath($tag_file);
-  $path = file_exists($tag_file) ? $tag_file : dirname($tag_file);
+  touch($tag_file);
+  $path = realpath($tag_file);
   if (!is_writable($path)) {
     return drush_set_error('DRUSH_PERM_ERROR', dt('Cannot write the tags file. Specify another path with --tag-file=path/to/tags'));
   }
@@ -274,16 +274,16 @@ function drush_vimrc_vimrc_tag_gen_validate() {
 /**
  * Implements drush_hook_COMMAND().
  */
-function drush_vimrc_vimrc_tag_gen($path = '.') {
+function drush_vimrc_tag_gen($path = '.') {
   // Get the option values.  This duplicates a few lines of the validate
   // function. :-(
   $ctags = drush_get_option('ctags', 'ctags');
   $ctags = escapeshellcmd($ctags);
-  $tag_file = drush_get_option('tag-file', 'tags');
-  $tag_file = realpath($tag_file);
+  $tag_file = realpath(drush_get_option('tag-file', 'tags'));
   $include_js = drush_get_option('include-js', 'yes');
   $include_test = drush_get_option('include-test', 'yes');
-  // Figure out which options to use.
+
+  // Figure out which ctags options to use.
   $langmap = 'php:+.module.install.inc.profile.theme.engine';
   if ($include_test == 'yes') {
     $langmap .= '.test';
