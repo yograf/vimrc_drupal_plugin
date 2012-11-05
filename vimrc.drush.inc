@@ -38,8 +38,8 @@ function vimrc_drush_command() {
     'options' => array(
       'tag-file' => 'Name of the output file (defaults to "tags")',
       'ctags' => 'Path to the exuberant ctags executable (defaults to "ctags")',
-      'include-js' => 'Include tags for .js files (defaults to "yes")',
-      'include-test' => 'Include tags for .test files (defaults to "yes")',
+      'include-js' => 'Include tags for .js files (defaults to "no")',
+      'include-test' => 'Include tags for .test files (defaults to "no")',
     ),
     'examples' => array(
       'drush vimrc-tag-gen $HOME/Sites/drupal-7 --tag-file=drupal7.tags'
@@ -263,7 +263,7 @@ function drush_vimrc_tag_gen_validate() {
   // Check that the boolean flags are "yes" or "no".
   $flags = array('include-js', 'include-test');
   foreach ($flags as $flag) {
-    $option = drush_get_option($flag, 'yes');
+    $option = drush_get_option($flag, 'no');
     if ($option != 'yes' && $option != 'no') {
       // TODO: Find a better error code.
       return drush_set_error('DRUSH_UNKNOWN_OPTION', dt('The --include-* options should be specified as "yes" or "no".'));
@@ -280,8 +280,8 @@ function drush_vimrc_tag_gen($path = '.') {
   $ctags = drush_get_option('ctags', 'ctags');
   $ctags = escapeshellcmd($ctags);
   $tag_file = realpath(drush_get_option('tag-file', 'tags'));
-  $include_js = drush_get_option('include-js', 'yes');
-  $include_test = drush_get_option('include-test', 'yes');
+  $include_js = drush_get_option('include-js', 'no');
+  $include_test = drush_get_option('include-test', 'no');
 
   // Figure out which ctags options to use.
   $langmap = 'php:+.module.install.inc.profile.theme.engine';
