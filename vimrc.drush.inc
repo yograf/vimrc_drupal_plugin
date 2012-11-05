@@ -284,16 +284,21 @@ function drush_vimrc_tag_gen($path = '.') {
   $include_test = drush_get_option('include-test', 'no');
 
   // Figure out which ctags options to use.
+  $excludes = array('.git');
   $langmap = 'php:+.module.install.inc.profile.theme.engine';
   if ($include_test == 'yes') {
     $langmap .= '.test';
+  }
+  else {
+    $excludes += array('simpletest', 'tests', 'Tests', 'Test', 'Test.php');
   }
   if ($include_js != 'yes') {
     $langmap .= ',javascript:';
   }
   $options = "-R --totals --extra=+f --langmap=$langmap --php-kinds=-v";
+  $options .= ' --exclude=' . implode(' --exclude=', $excludes);
   // Run ctags, generating $tag_file.
-  print dt('Some warning messages from ctags are normal.') . "\n";
+  print dt('Some warning messages from ctags are normal.') . "\n\n";
   exec("$ctags -f $tag_file $options $path");
   // Read the file into an array.
   $lines = file($tag_file);
