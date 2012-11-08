@@ -181,19 +181,18 @@ endfun
 " if strlen(open) | execute '!' . open . ' http://example.com' | endif
 " See http://www.dwheeler.com/essays/open-files-urls.html
 function! s:OpenCommand()
-if has('macunix') && executable('open')
-  return 'open'
-endif
 if has('win32unix') && executable('cygstart')
   return 'cygstart'
-endif
-if has('unix') && executable('xdg-open')
+elseif has('unix') && executable('xdg-open')
   return 'xdg-open'
-endif
-if (has('win32') || has('win64')) && executable('cmd')
+elseif (has('win32') || has('win64')) && executable('cmd')
   return 'cmd /c start'
-endif
+elseif (has('macunix') || has('unix') && system('uname') =~ 'Darwin')
+      \ && executable('open')
+  return 'open'
+else
   return ''
+endif
 endfun
 
 " {{{ @function s:CoreVersion(info_path)

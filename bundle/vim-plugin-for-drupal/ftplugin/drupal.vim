@@ -25,6 +25,20 @@ if &ft =~ '\<php\>' && exists('loaded_syntastic_plugin') && executable('phpcs')
 	\ . ' --extensions=php,module,inc,install,test,profile,theme'
 endif
 
+" {{{ PHP specific settings.
+" In ftdetect/drupal.vim we set ft=php.drupal.  This means that the settings
+" here will come after those set by the PHP ftplugins.  In particular, we can
+" override the 'comments' setting.
+
+if &ft =~ '\<php\>'
+  setl ignorecase              "Ignore case in search
+  setl smartcase               "Only ignore case when all letters are lowercase
+  "  Format comment blocks.  Just type / on a new line to close.
+  "  Recognize // (but not #) style comments.
+  setl comments=sr:/**,m:*\ ,ex:*/,://
+endif
+" }}} PHP specific settings.
+
 augroup Drupal
   autocmd! BufEnter <buffer> call s:BufEnter()
 augroup END
@@ -104,8 +118,10 @@ endfun
 
 endif " !exists('*s:OpenURL')
 
+" Add some menu items.
+
+let s:options = {'root': 'Drupal', 'special': '<buffer>'}
 if strlen(b:Drupal_info.OPEN_COMMAND)
-  let s:options = {'root': 'Drupal', 'special': '<buffer>'}
 
   " Lookup the API docs for a drupal function under cursor.
   nmap <Plug>DrupalAPI :silent call <SID>OpenURL("api.d.o")<CR><C-L>
@@ -128,17 +144,3 @@ nnoremap <buffer> <LocalLeader>dv :execute "!drush vget ".shellescape(expand("<c
   call drupal#CreateMaps('n', 'variable_get', '<LocalLeader>dv',
 	\ ':execute "!drush vget ".shellescape(expand("<cword>"), 1)<CR>',
 	\ s:options)
-
-" {{{ PHP specific settings.
-" In ftdetect/drupal.vim we set ft=php.drupal.  This means that the settings
-" here will come after those set by the PHP ftplugins.  In particular, we can
-" override the 'comments' setting.
-
-if &ft =~ '\<php\>'
-  setl ignorecase              "Ignore case in search
-  setl smartcase               "Only ignore case when all letters are lowercase
-  "  Format comment blocks.  Just type / on a new line to close.
-  "  Recognize // (but not #) style comments.
-  setl comments=sr:/**,m:*\ ,ex:*/,://
-endif
-" }}} PHP specific settings.
