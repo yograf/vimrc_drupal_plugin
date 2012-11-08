@@ -61,15 +61,16 @@ endfun
 " }}} s:BufEnter()
 
 " The tags file can be used for PHP omnicompletion even if $DRUPAL_ROOT == ''.
-" If $DRUPAL_ROOT is set correctly, then the tags file can be used for tag
-" searches.
+" If $DRUPAL_ROOT is set correctly, then the tags file can also be used for
+" tag searches.
 " TODO:  If we do not know which version of Drupal core, add no tags file or
 " all?
 if strlen(b:Drupal_info.CORE)
-  let s:tags = 'drupal' . b:Drupal_info.CORE . '.tags'
+  let tags = 'drupal' . b:Drupal_info.CORE . '.tags'
   " Bail out if the Drupal tags file has already been added.
-  if stridx(&l:tags, s:tags) == -1
-    let &l:tags .= ',' . expand('<sfile>:p:h:h') . '/' . s:tags
+  if stridx(&l:tags, tags) == -1
+    " <sfile>:p = .../vimrc/bundle/vim-plugin-for-drupal/ftplugin/drupal.vim
+    let &l:tags .= ',' . expand('<sfile>:p:h:h') . '/tagfiles/' . tags
   endif
 endif
 

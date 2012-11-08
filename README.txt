@@ -3,11 +3,48 @@ Vim configuration files for Drupal developers
 The files in this directory are designed to make it easier for Drupal developers
 to edit files using vim.
 
-INSTALLATION
+The home page for this project is http://drupal.org/project/vimrc, and the main
+documentation page is http://drupal.org/node/1389006. Once the project is
+installed, you can read the local documentation from within vim with
+        :help drupal
 
-Copy the files, other than this README.txt, into your vimfiles directory.  For
-most users, your vimfiles directory is ~/.vim; on Windows, it is ~\vimfiles by
-default.  From within vim, use
+INSTALLATION WITH DRUSH
+
+This is the recommended method. Drush will download this project to
+~/.drush/vimrc (or to /usr/share/drush/commands/vimrc--see `drush help dl`).
+Then the installation script will install Pathogen, if needed, and continue as
+described below. You can install to another directory if you prefer. From a
+command line,
+        $ drush @none dl vimrc
+        $ drush help vimrc-install
+        $ drush vimrc-install <options>
+
+INSTALLATION WITH PATHOGEN
+
+Pathogen (http://www.vim.org/scripts/script.php?script_id=2332) is a package
+manager for vim. If you already have Pathogen installed, then put these files
+wherever you like and add
+        :call pathogen#infect('path/to/vimrc/bundle')
+near the top of your vimrc file (~/.vim or $HOME\_vimrc on Windows). Another
+option is to make a symbolic link to the bundle/ directory under your vimfiles
+directory. Explicitly,
+        $ mkdir ~/.vim/bundle
+        $ ln -s path/to/vimrc/bundle/vim-plugin-for-drupal ~/.vim/bundle
+In this case, add the line
+        :call pathogen#infect()
+to your vimrc file if it is not already there.
+
+In either case, use the command
+        :Helptags
+to install the included help file.
+
+For more details, see bundle/vim-plugin-for-drupal/doc/drupal.txt .
+
+BASIC INSTALLATION (without pathogen)
+
+Copy the files from the bundle/vim-plugin-for-drupal/ subdirectory into your
+vimfiles directory.  For most users, your vimfiles directory is ~/.vim; on
+Windows, it is ~\vimfiles by default.  From within vim, use
 
 :help vimfiles
 
@@ -15,23 +52,30 @@ for details.  If you have downloaded these files as vimrc.tar.gz and your
 vimfiles directory is ~/.vim, then this should work on UNIX-like systems:
 
 $ cd ~/.vim
-$ tar xzf path/to/vimrc.tar.gz --strip-components 1 --exclude=README.txt
+$ tar xzf path/to/vimrc.tar.gz --strip-components 3 \
+  vimrc/bundle/vim-plugin-for-drupal
 
-Note:  if there are filename conflicts, then tar will silently remove the
+Note:  if there are filename conflicts, then tar will silently overwrite the
 existing files.
 
 When you are done, you should have the following directory structure inside your
 vimfiles directory:
 
+        autoload/drupal.vim
+        compiler/coder.vim
         doc/drupal.txt
-        drupal6.tags
-        drupal7.tags
         ftdetect/drupal.vim
         ftplugin/drini.vim
         ftplugin/drupal.vim
         plugin/drupal.vim
+        snipmate/drupal/php.snippets
+        snipmate/drupal6/php.snippets
+        snipmate/drupal7/php.snippets
         syntax/drini.vim
         syntax/drupal.vim
+        tagfiles/drupal6.tags
+        tagfiles/drupal7.tags
+        tagfiles/drupal8.tags
 
 In order to use the tags defined in the help file, start vim and do
         :helptags ~/.vim/doc
@@ -39,28 +83,6 @@ In order to use the tags defined in the help file, start vim and do
         :help add-local-help
 for details.  After this step, you should be able to read the documentation with
         :help drupal.txt
-
-INSTALLATION WITH PATHOGEN
-
-If you use http://www.vim.org/scripts/script.php?script_id=2332 (pathogen) then
-you can install this project anywhere you like.  One suggestion is to rename
-the directory from vimrc/ to drupal/ and then place it in your bundle/
-directory.  Explicitly, the documentation will be
-
-        ~/.vim/bundle/drupal/doc/drupal.txt (Linux, Mac, etc.)
-        ~\vimfiles\bundle\drupal\doc\drupal.txt (Windows)
-
-Another suggestion is to keep this project with your other Drupal files.  For
-example, if you put this project under ~/drupalstuff/bundle/, so that the
-documentation is ~/drupalstuff/bundle/vimrc/doc/drupal.txt, then add
-
-        :call pathogen#infect(~/drupalstuff/bundle)
-
-to your vimrc file.  (The Windows variant is left as an exercise.)
-
-In either case, you can use the command
-        :Helptags
-instead of :helptags, and let pathogen figure out the path for you.
 
 AUTOCOMPLETION IN .INFO FILES
 
@@ -106,7 +128,7 @@ of the plugins.
 There are two methods to create the required vimrc file:
 
 1) On Linux or Mac OS X, go to the directory where you have the files from this
-project and
+project and from the subdirectory bundle/vim-plugin-for-drupal/ do
 
 $ cat plugin/drupal.vim ftplugin/php_drupal.vim >> ~/.vimrc
 
@@ -115,8 +137,8 @@ NOTE: Windows users should use ~\vimfiles instead of ~/.vimrc.  You will
 probably need a method other than cat.
 
 2) Create a vimrc file and add these two lines inside it:
-        source path/to/vimrc/plugin/drupal.vim
-        source path/to/vimrc/ftplugin/php_drupal.vim
+        source path/to/vimrc/bundle/vim-plugin-for-drupal/plugin/drupal.vim
+        source path/to/vimrc/bundle/vim-plugin-for-drupal/ftplugin/php_drupal.vim
 NOTE: Where path/to/vimrc is where you extracted the contents of this project.
 
 * Info on tiny-vim
