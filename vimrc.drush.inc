@@ -30,6 +30,27 @@ function vimrc_drush_command() {
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
   );
 
+  $items['vimrc-tag-gen'] = array(
+    'description' => 'Generate a tags file for use by vim and other programs.',
+    'arguments' => array(
+      'path' => 'System path to a file or directory (e.g. your Drupal distribution or a module folder). Defaults to the current directory.',
+    ),
+    'options' => array(
+      'tag-file' => 'Name of the output file (defaults to "tags")',
+      'ctags' => 'Path to the exuberant ctags executable (defaults to "ctags")',
+      'include-js' => 'Include tags for .js files (defaults to "no")',
+      'include-test' => 'Include tags for .test files (defaults to "no")',
+    ),
+    'examples' => array(
+      'drush vimrc-tag-gen $HOME/Sites/drupal-7 --tag-file=drupal7.tags'
+      => 'Generate a tags file for your distribution of Drupal 7 and save it as drupal7.tags in the current directory.',
+      'drush tags sites/all/modules/ctools --ctags=/usr/local/bin/ctags'
+      => 'Generate a tags file for the ctools module using a specific ctage executable and save it as tags in the current directory.',
+    ),
+    'aliases' => array('tags'),
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
+  );
+
   return $items;
 }
 
@@ -219,4 +240,87 @@ function drush_vimrc_install($path = '.') {
   $lines = vimrc_vim_command($vim, 'call pathogen#helptags()');
 
   return;
+}
+
+/**
+ * Implements drush_hook_COMMAND_validate().
+ */
+function drush_vimrc_tag_gen_validate() {
+  // Bail out if ctags is not executable or is not the right version.
+  $ctags = drush_get_option('ctags', 'ctags');
+  $ctags = escapeshellcmd($ctags);
+  exec("$ctags --version", $output, $retval);
+  if ($retval || !preg_match('/^Exuberant Ctags/', $output[0])) {
+    return drush_set_error('DRUSH_APPLICATION_ERROR', dt('Make sure that Exuberant Ctags is installed (http://ctags.sourceforge.net/) and specify the path with (for example) --ctags=/usr/local/bin/ctags'));
+  }
+  // Check that the tags file is writable.
+  $tag_file = drush_get_option('tag-file', 'tags');
+  touch($tag_file);
+  $path = realpath($tag_file);
+  if (!is_writable($path)) {
+    return drush_set_error('DRUSH_PERM_ERROR', dt('Cannot write the tags file. Specify another path with --tag-file=path/to/tags'));
+  }
+  // Check that the boolean flags are "yes" or "no".
+  $flags = array('include-js', 'include-test');
+  foreach ($flags as $flag) {
+    $option = drush_get_option($flag, 'no');
+    if ($option != 'yes' && $option != 'no') {
+      // TODO: Find a better error code.
+      return drush_set_error('DRUSH_UNKNOWN_OPTION', dt('The --include-* options should be specified as "yes" or "no".'));
+    }
+  }
+}
+
+/**
+ * Implements drush_hook_COMMAND().
+ */
+function drush_vimrc_tag_gen($path = '.') {
+  // Get the option values.  This duplicates a few lines of the validate
+  // function. :-(
+  $ctags = drush_get_option('ctags', 'ctags');
+  $ctags = escapeshellcmd($ctags);
+  $tag_file = realpath(drush_get_option('tag-file', 'tags'));
+  $include_js = drush_get_option('include-js', 'no');
+  $include_test = drush_get_option('include-test', 'no');
+
+  // Figure out which ctags options to use.
+  $excludes = array('.git');
+  $langmap = 'php:+.module.install.inc.profile.theme.engine';
+  if ($include_test == 'yes') {
+    $langmap .= '.test';
+  }
+  else {
+    $excludes += array('simpletest', 'tests', 'Tests', 'Test', 'Test.php');
+  }
+  if ($include_js != 'yes') {
+    $langmap .= ',javascript:';
+  }
+  $options = "-R --totals --extra=+f --langmap=$langmap --php-kinds=-v";
+  $options .= ' --exclude=' . implode(' --exclude=', $excludes);
+  // Run ctags, generating $tag_file.
+  print dt('Some warning messages from ctags are normal.') . "\n\n";
+  exec("$ctags -f $tag_file $options $path");
+  // Read the file into an array.
+  $lines = file($tag_file);
+  $handle = fopen($tag_file, 'w');
+  // Process the lines and rewrite the file.
+  foreach ($lines as $line) {
+    // Skip anything that looks like a comment.
+    if (preg_match('#/\^\s*(\\\\/\\\\/|/\*|\*|\'\')#', $line) == 1) {
+      continue;
+    }
+    // Skip anything that looks like 'key' => 'value'.
+    if (preg_match('/[\'"]#?\w+[\'"]\s*=>/', $line) == 1) {
+      continue;
+    }
+    // Skip anything that looks like $output .= 'lotsa text'.
+    if (preg_match('#/\^\s*\$\w+\s*\.?\=#', $line) == 1) {
+      continue;
+    }
+    // Replace the path (but not any trailing '/') with '$DRUPAL_ROOT'.
+    $shortpath = preg_replace('#/$#', '', $path);
+    $line = str_replace($shortpath, '$DRUPAL_ROOT', $line);
+    fwrite($handle, $line);
+  }
+  fclose($handle);
 }
