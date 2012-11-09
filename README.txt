@@ -17,7 +17,7 @@ described below. You can install to another directory if you prefer. From a
 command line,
         $ drush @none dl vimrc
         $ drush help vimrc-install
-        $ drush vimrc-install <options>
+        $ drush -v vimrc-install <options>
 
 INSTALLATION WITH PATHOGEN
 

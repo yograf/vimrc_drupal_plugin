@@ -32,7 +32,7 @@ described below. You can install to another directory if you prefer. From a
 command line, >
         $ drush @none dl vimrc
         $ drush help vimrc-install
-        $ drush vimrc-install <options>
+        $ drush -v vimrc-install <options>
 
 INSTALLATION WITH PATHOGEN
 
@@ -42,7 +42,7 @@ separate from other Vim plugins, so it is easier to update or remove, and you
 do not have to worry about name collisions.
 
 With Pathogen, you can install this project anywhere you like.  One suggestion
-is to create ~/.drush/bundle/ and put it there.  Explicitly, the documentation
+is to create ~/.drush/vimrc and put it there.  Explicitly, the documentation
 will be >
         ~/.drush/vimrc/bundle/vim-plugin-for-drupal/doc/drupal.txt (Linux etc.)
         ~\.drush\vimrc\bundle\vim-plugin-for-drupal\doc\drupal.txt (Windows)
@@ -69,7 +69,7 @@ your vimfiles directory is ~/.vim, then this should work on UNIX-like systems: >
         $ cd ~/.vim
         $ tar xzf path/to/vimrc.tar.gz --strip-components 3 \
                   vimrc/bundle/vim-plugin-for-drupal
-Note:  if there are filename conflicts, then tar will silently remove the
+Note:  if there are filename conflicts, then tar will silently overwrite the
 existing files.
 
 When you are done, you should have the following directory structure inside
