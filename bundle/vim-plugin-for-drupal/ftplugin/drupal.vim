@@ -76,17 +76,31 @@ endfun
 
 " The tags file can be used for PHP omnicompletion even if $DRUPAL_ROOT == ''.
 " If $DRUPAL_ROOT is set correctly, then the tags file can also be used for
-" tag searches.
+" tag searches. Look for tags files in the project (module, theme, etc.)
+" directory, the Drupal root directory, and in ../tagfiles/.
 " TODO:  If we do not know which version of Drupal core, add no tags file or
 " all?
-if strlen(b:Drupal_info.CORE)
-  let tags = 'drupal' . b:Drupal_info.CORE . '.tags'
-  " Bail out if the Drupal tags file has already been added.
-  if stridx(&l:tags, tags) == -1
-    " <sfile>:p = .../vimrc/bundle/vim-plugin-for-drupal/ftplugin/drupal.vim
-    let &l:tags .= ',' . expand('<sfile>:p:h:h') . '/tagfiles/' . tags
-  endif
+let tags = []
+if strlen(b:Drupal_info.INFO_FILE)
+  let tags += [fnamemodify(b:Drupal_info.INFO_FILE, ':p:h') . '/tags']
 endif
+if strlen(b:Drupal_info.DRUPAL_ROOT)
+  let tags += [fnamemodify(b:Drupal_info.DRUPAL_ROOT, ':p:h') . '/tags']
+endif
+if strlen(b:Drupal_info.CORE)
+  let tagfile = 'drupal' . b:Drupal_info.CORE . '.tags'
+  " <sfile>:p = .../vimrc/bundle/vim-plugin-for-drupal/ftplugin/drupal.vim
+  let tags += [expand('<sfile>:p:h:h') . '/tagfiles/' . tagfile]
+endif
+for tagfile in tags
+  " Bail out if the tags file has already been added.
+  if stridx(&l:tags, tagfile) == -1
+    " This is like :setlocal tags += ... but without having to escape special
+    " characters.
+    " :help :let-option
+    let &l:tags .= ',' . tagfile
+  endif
+endfor
 
 if !exists('*s:OpenURL')
 
