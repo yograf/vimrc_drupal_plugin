@@ -305,8 +305,76 @@ function! s:DrushComplete(ArgLead, CmdLine, CursorPos) abort" {{{
 endfun
 " }}} }}}
 
-" {{{ @
-function! s:SetDrupalRoot()
+" {{{ Menu items and supporting functions.
+
+" Tag commands.
+
+" Return path to exuberant ctags, or '' if not found." {{{
+function! s:CtagsPath()" {{{
+  let dirs = ['', '/usr/bin/', '/usr/local/bin/']
+  for dir in dirs
+    if executable(dir . 'ctags')
+      if system(dir . 'ctags --version') =~ 'Exuberant Ctags'
+        return dir . 'ctags'
+      endif
+    endif
+  endfor
+  return ''
+endfun" }}}" }}}
+
+" Invoke ctags via drush, either for the current project or for the Drupal" {{{
+" root.
+"
+" @param type
+"   Either 'project' or 'drupal'.
+function! s:TagGen(type)" {{{
+  let ctags = s:CtagsPath()
+  if strlen(ctags) == 0
+    return
+  endif
+  let options = ' --ctags=' . ctags
+  if a:type == 'project' && b:Drupal_info.INFO_FILE != ''
+    let tagdir = fnamemodify(b:Drupal_info.INFO_FILE, ':h')
+  elseif a:type == 'drupal' && b:Drupal_info.DRUPAL_ROOT != ''
+    let tagdir = b:Drupal_info.DRUPAL_ROOT
+    " let options .= ' --make-portable=yes'
+  else
+    return
+  endif
+  let options .= ' --tag-file=' . tagdir . '/tags'
+  call s:Drush('vimrc-tag-gen ' . options . ' ' . tagdir)
+endfun" }}}" }}}
+
+let s:options = {'root': 'Drupal.Tags', 'shortcut': '<C-]>', 'weight': '100.'}
+let s:descriptions = [
+      \ ['<C-]>', 'Tag under cursor'],
+      \ ['<C-W>]', 'Ditto, split window'],
+      \ [':tag ', 'Go to a tag.'],
+      \ [':stag ', 'Ditto, split window'],
+      \ [':tag /', 'Search for tag.'],
+      \ [':stag /', 'Ditto, split window'],
+      \ [':tag /', 'Search for tag.'],
+      \ [':stag /', 'Ditto, split window'],
+      \ [':ts<CR>', 'Choose one match.'],
+      \ ]
+for [s:key, s:text] in s:descriptions
+  let s:options.shortcut = s:key
+  call drupal#CreateMaps('n', s:text, '', s:key, s:options)
+endfor
+if strlen(s:CtagsPath())
+  unlet s:options.shortcut
+  call drupal#CreateMaps('n', '-Drupal.Tags Sep-', '', ':', s:options)
+  call drupal#CreateMaps('n', 'tag-gen options', '',
+        \ ':Drush help vimrc-tag-gen<CR>', s:options)
+  nmap <Plug>DrupalTagGenProject :call <SID>TagGen('project')<CR>
+  call drupal#CreateMaps('n', 'tag-gen current project', '',
+        \ '<Plug>DrupalTagGenProject', s:options)
+  nmap <Plug>DrupalTagGenRoot :call <SID>TagGen('drupal')<CR>
+  call drupal#CreateMaps('n', 'tag-gen Drupal root', '',
+        \ '<Plug>DrupalTagGenRoot', s:options)
+endif
+
+function! s:SetDrupalRoot() " {{{
   let dir = input('Drupal root directory: ', b:Drupal_info.DRUPAL_ROOT, 'file')
   let b:Drupal_info.DRUPAL_ROOT = expand(substitute(dir, '[/\\]$', '', ''))
   if strlen(dir)
@@ -317,7 +385,9 @@ function! s:SetDrupalRoot()
   endif
 endfun
 " }}}
+" Drupal.Configure menu.
 nmap <Plug>DrupalSetRoot :call <SID>SetDrupalRoot()<CR>
 let s:options = {'root': 'Drupal.Configure', 'weight': '900.'}
 call drupal#CreateMaps('n', 'Set Drupal root', '', '<Plug>DrupalSetRoot', s:options)
 call drupal#CreateMaps('n', 'Show Drupal info', '', ':echo b:Drupal_info<CR>', s:options)
+" }}}

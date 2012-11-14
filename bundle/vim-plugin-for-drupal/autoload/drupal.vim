@@ -3,7 +3,8 @@
 " @param
 "   String modes:  the modes for which the map/menu item will be defined, such
 "     as 'nv'.
-"   String menu:  the menu item:  see also a:options.root.
+"   String menu:  the menu item. Periods (.) will be escaped:  see also
+"     a:options.root.
 "   String key:  the key sequence to be mapped.
 "   String target:  the result of the map or menu item.
 "   Dictionary options:  the keys are all optional.
@@ -21,11 +22,10 @@
 function! drupal#CreateMaps(modes, menu, key, target, options)
   let special = ' ' . get(a:options, 'special', '') . ' '
   let map_command = 'map' . special . a:key . ' ' . a:target
-  let shortcut = escape(get(a:options, 'shortcut', a:key), ' ')
   if has_key(a:options, 'root')
-    let item = a:options.root . '.' . a:menu
+    let item = a:options.root . '.' . escape(a:menu, '.')
   else
-    let item = a:menu
+    let item = escape(a:menu, '.')
   endif
   let specials = filter(split(special), "v:val =~? '^<s'")
   let menu_command = 'menu ' . join(specials)
@@ -35,6 +35,7 @@ function! drupal#CreateMaps(modes, menu, key, target, options)
     let menu_command .= ' ' . dots . a:options.weight
   endif
   let menu_command .= ' ' . escape(item, ' ')
+  let shortcut = get(a:options, 'shortcut', a:key)
   if strlen(shortcut)
     let leader = exists('mapleader') ? mapleader : '\'
     let shortcut = substitute(shortcut, '\c<leader>', escape(leader, '\'), 'g')
@@ -47,7 +48,7 @@ function! drupal#CreateMaps(modes, menu, key, target, options)
       let len = strlen(a:menu . shortcut)
       let menu_command .= repeat('\ ', max([1, 20 - len]))
     endif
-    let menu_command .= escape(shortcut, '\')
+    let menu_command .= escape(shortcut, ' \')
   endif
   let menu_command .= ' ' . a:target
   " Execute the commands built above for each requested mode.

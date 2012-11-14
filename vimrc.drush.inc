@@ -40,12 +40,13 @@ function vimrc_drush_command() {
       'ctags' => 'Path to the exuberant ctags executable (defaults to "ctags")',
       'include-js' => 'Include tags for .js files (defaults to "no")',
       'include-test' => 'Include tags for .test files (defaults to "no")',
+      'make-portable' => 'Replace path with \'$DRUPAL_ROOT\' (defaults to "no")',
     ),
     'examples' => array(
       'drush vimrc-tag-gen $HOME/Sites/drupal-7 --tag-file=drupal7.tags'
       => 'Generate a tags file for your distribution of Drupal 7 and save it as drupal7.tags in the current directory.',
       'drush tags sites/all/modules/ctools --ctags=/usr/local/bin/ctags'
-      => 'Generate a tags file for the ctools module using a specific ctage executable and save it as tags in the current directory.',
+      => 'Generate a tags file for the ctools module using a specific ctags executable and save it as tags in the current directory.',
     ),
     'aliases' => array('tags'),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
@@ -261,7 +262,7 @@ function drush_vimrc_tag_gen_validate() {
     return drush_set_error('DRUSH_PERM_ERROR', dt('Cannot write the tags file. Specify another path with --tag-file=path/to/tags'));
   }
   // Check that the boolean flags are "yes" or "no".
-  $flags = array('include-js', 'include-test');
+  $flags = array('include-js', 'include-test', 'make-portable');
   foreach ($flags as $flag) {
     $option = drush_get_option($flag, 'no');
     if ($option != 'yes' && $option != 'no') {
@@ -317,9 +318,11 @@ function drush_vimrc_tag_gen($path = '.') {
     if (preg_match('#/\^\s*\$\w+\s*\.?\=#', $line) == 1) {
       continue;
     }
-    // Replace the path (but not any trailing '/') with '$DRUPAL_ROOT'.
-    $shortpath = preg_replace('#/$#', '', $path);
-    $line = str_replace($shortpath, '$DRUPAL_ROOT', $line);
+    if (drush_get_option('make-portable', 'no') == 'yes') {
+      // Replace the path (but not any trailing '/') with '$DRUPAL_ROOT'.
+      $shortpath = preg_replace('#/$#', '', $path);
+      $line = str_replace($shortpath, '$DRUPAL_ROOT', $line);
+    }
     fwrite($handle, $line);
   }
   fclose($handle);
