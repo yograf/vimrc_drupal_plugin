@@ -9,7 +9,7 @@
 3. Drupal plugin                                        |drupal-plugin|
 4. Drupal filetype plugin                               |drupal-ftplugin|
 5. Editing .info files                                  |drupal-info|
-6. Tag searches for Drupal core                         |drupal-tags|
+6. Tag searches for Drupal core and contrib             |drupal-tags|
 7. Drupal/PHP omni-completion                           |ft-drupal-omni|
 8. Coder support                                        |ft-drupal-coder|
 9. Drush integration                                    |drupal-drush|
@@ -21,7 +21,7 @@ The functionality mentioned here is provided by several files.  See the
 installation section.
 
 ==============================================================================
-1. Installation                                         *drupal-installation*
+1. Installation                    *drupal-installation* *drush-vimrc-install*
 
 INSTALLATION WITH DRUSH
 
@@ -253,15 +253,16 @@ block, just type "<CR>/" and the inserted "* " will automatically turn into
 LOCAL MAPPINGS                                          *drupal-local-maps*
 The ftplugin file also defines the following buffer-local mappings:
 
+                                                     *drupal-api* *drupal-\da*
 \da     Lookup the API docs for a drupal function under cursor.
-                                        *drupal-contrib* *drupal-\dc*
-\dc     Same as \da but use http://drupalcontrib.org/.
-                                        *drupal-drush-API* *drupal-\dda*
-\dda    Lookup the API docs for a drush function under cursor.
-                                        *drupal-hook* *drupal-\dh*
+                                                    *drupal-hook* *drupal-\dh*
 \dh     Lookup the API docs for a hook implemented by the drupal function
         under the cursor.
-                                        *drupal-variable* *drupal-\dv*
+                                                 *drupal-contrib* *drupal-\dc*
+\dc     Same as \da but use http://drupalcontrib.org/.
+                                              *drupal-drush-API* *drupal-\dda*
+\dda    Lookup the API docs for a drush function under cursor.
+                                                *drupal-variable* *drupal-\dv*
 \dv     Get the value of the drupal variable under cursor.  (Requires drush.)
 
 You can define the |maplocalleader| variable to be something other than the
@@ -289,17 +290,27 @@ only way to get version 8.0 is to start with 7.0 and apply the patch at
 http://drupal.org/node/1303122#comment-5213300 .
 
 ==============================================================================
-6. Tag searches for Drupal core *drupal6.tags* *drupal7.tags* *drupal-tags*
+6. Tag searches for Drupal core                   *drupal-tags* *$DRUPAL_ROOT*
+                                  *drupal6.tags* *drupal7.tags* *drupal8.tags*
 
 If the scripts can determine the root of your Drupal installation, then they
 will set the environment variable $DRUPAL_ROOT and add the appropriate tags
-file (currently drupal6.tags or drupal7.tags) to the 'tags' option.  This lets
-you use vim's |tag-commands| to jump to functions and more that are defined in
-Drupal core.  For example, if the cursor is on the start of the line >
+file (currently drupal6.tags, drupal7.tags, or drupal8.tags) to the 'tags'
+option.  This lets you use vim's |tag-commands| to jump to functions and more
+that are defined in Drupal core.  For example, if the cursor is on the start
+of the line >
         drupal_set_message('Hello, world!');
 then you can use <C-W>] to open drupal/includes/bootstrap.inc in a new window
 and jump to the definition of drupal_set_message().  See also section |29.1|
 in the user manual and |window-tag|.
+                                                         *drush-vimrc-tag-gen*
+If your system has |Exuberant_ctags| and drush installed, then you can create
+tags files for your own projects, contrib projects, or your entire Drupal
+installation with the included vimrc-tag-gen (alias tags) drush command. For
+details, see >
+  $ drush help vimrc-tag-gen
+or >
+  :Drush help vimrc-tag-gen
 
 ==============================================================================
 7. Drupal/PHP omni-completion                           *ft-drupal-omni*
@@ -343,10 +354,7 @@ setting the compiler, you can also update other files or entire directories: >
 ==============================================================================
 9. Drush integration                            *drupal-drush* *drupal-:Drush*
 
-See also |drupal-\dv| and |drupal-\dda|.
-See http://drupal.org/node/1145580 and http://drupal.org/node/1735030 for the
-status of work to use drush for installing this project and for generating
-tags files.
+See also |vimrc-install|, |vimrc-tag-gen|, |drupal-\dv|, and |drupal-\dda|.
 
 If drush is installed, then the command >
         :Drush <subcommand>
@@ -372,13 +380,72 @@ can add your own menus, including command-line hints, using
 drupal#CreateMaps().  Example: >
         :let s:options = {'root': 'Drupal', 'special': '<buffer>'}
         :nmap <Plug>DrupalAPI :silent call <SID>OpenURL("api.d.o")<CR><C-L>
-        :call drupal#CreateMaps('n', 'Drupal API', '<LocalLeader>da', 
+        :call drupal#CreateMaps('n', 'Drupal API', '<LocalLeader>da',
                 \ '<Plug>DrupalAPI', s:options)
 These lines (from ftplugin/drupal.vim) define the menu item
 'Drupal.Drupal API' with the command-line hint |\da|, calling the s:OpenURL()
 function to open api.drupal.org on the page describing the function under the
-cursor.  The 'n' argument indicates that this menu item is available only in
+cursor.  The "n" argument indicates that this menu item is available only in
 Normal mode.
+
+Some menu items perform complicated or rarely-used tasks. Others are there
+mostly to teach you the keyboard shortcuts. Here is a summary of the menus:
+
+Tag commands: Drupal.Tags |tag-commands|                    *drupal-menu-tags*
+  Tag under cursor:
+    Jump to the definition of the keyword under the cursor. |CTRL-]|
+  Ditto, split window:
+    Open a new window and jump to the definition of the keyword under the
+    cursor. |CTRL-W_]|
+  Got to a tag.:
+    Enter a tag, such as "node.module", on the command line. |:tag|
+  Ditto, split window:
+    Enter a tag on the command line and split the window. |:stag|
+  Search for tag.:
+    Enter a |pattern|, such as "drupal_set_" or "node_.*form\>", on the
+    command line. |:tag|
+  Ditto, split window:
+    Enter a |pattern| on the command line and split the window. |:stag|
+  Choose one match.:
+    See a list of all tag matches for the previous tag command and jump to one
+    of them. Even if you use a complete tag, there may be multiple matches.
+    For example, "execute" is defined for several database-related classes.
+    |:tselect|
+  tag-gen options:
+    Show the help text for the |vimrc-tag-gen| drush command, using |:Drush|.
+  tag-gen current project:
+    Generate a tags file for the current project (module, theme, etc.) using
+    |vimrc-tag-gen|.
+  tag-gen Drupal root:
+    Generate a tags file for the Drupal root directory using |vimrc-tag-gen|.
+    See |$DRUPAL_ROOT|.
+
+The three tag-gen menu items are only present if exuberant |ctags| is in your
+path or one of /usr/bin/ or /usr/local/bin/.
+
+Top-level commands: these menu items may be rearranged in a future release.
+  Drupal API:
+    Lookup the API docs for a drupal function under cursor.       |drupal-\da|
+  Drupal hook:
+    Lookup the API docs for a hook implemented by the drupal      |drupal-\dh|
+        function under the cursor.
+  Drupal contrib:
+    Same as \da but use http://drupalcontrib.org/.                |drupal-\dc|
+  Drush API:
+    Lookup the API docs for a drush function under cursor.       |drupal-\dda|
+  Get variable:
+    Get the value of the drupal variable under cursor.            |drupal-\dv|
+        (Requires drush.)
+
+The menu items that open a web browser are only present if one of the commands
+open (Mac), start (Windows), or xdg-open (Linux) is available.
+
+Configuration Drupal.Configure                         *drupal-menu-configure*
+  Set Drupal root:
+    If the script cannot guess the location of your Drupal root directory, you
+    can set it using this item. See |g:Drupal_dirs| to set permanent defaults.
+  Show Drupal info:
+    Show the current value of |b:Drupal_info|.
 
 ==============================================================================
 11. Drupal snippets                                     *drupal-snippets*
@@ -387,7 +454,7 @@ This project includes many snippets, organized by Drupal version, for use with
 the snipMate plugin (https://github.com/msanders/snipmate.vim).  If you have
 installed snipMate.vim, then see |snipMate-usage| for details.  (After
 installing snipMate.vim, you should have used |:Helptags| or |:helptags| to
-install the help files.)  Example: 
+install the help files.)  Example: >
         hook_block<Tab>
 (in Insert mode) will expand to an outline of the code you need to implement
 hook_block().
