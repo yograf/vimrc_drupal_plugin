@@ -139,8 +139,8 @@ function _vimrc_check_pathogen($vim) {
     return drush_set_error('DRUSH_APPLICATION_ERROR',
       dt('Error when calling vim to check for pathogen.'));
   }
-  $message = array_pop($lines);
-  return preg_match('#^finished sourcing .*autoload/pathogen.vim$#', $message);
+  $message = implode("\n", $lines);
+  return preg_match('#^finished sourcing .*autoload/pathogen.vim$#m', $message);
 }
 
 /**
@@ -154,25 +154,23 @@ function _vimrc_check_pathogen($vim) {
  *   The name of the vim executable.
  * @param String $command
  *   The vim command to execute.
+ * @param Boolean $implode
+ *   If TRUE, then return a single string instead of an array.
+ *   (optional, default FALSE)
+ *
  * @return Array
  *   The output of $command as an array of strings or FALSE on error.
  */
-function vimrc_vim_command($vim, $command) {
+function vimrc_vim_command($vim, $command, $implode = FALSE) {
   // TODO:  Does this work on Windows?
   $infile = drush_save_data_to_temp_file("$command\nqa!\n");
   $vimlog = drush_tempnam('vimrc');
-  // $lines = exec("echo $escapedcommand | $vim -e -s -V0$vimlog", $output, $retval);
   exec("$vim -e -s -N -V0$vimlog < $infile", $output, $retval);
   if ($retval > 1) {
     return FALSE;
   }
   $lines = file($vimlog);
-  // Remove empty line and 'Entering Ex mode' line.
-  unset($lines[0], $lines[1]);
-  // Remove 'empty buffer' message and :qa! line.
-  array_pop($lines);
-  array_pop($lines);
-  return $lines;
+  return $implode ? implode("\n", $lines) : $lines;
 }
 
 /**
@@ -184,15 +182,16 @@ function vimrc_vim_command($vim, $command) {
  *   The name of the vim executable.
  * @param Array $commands
  *   The vim commands to execute.
+ * @param Boolean $implode
+ *   If TRUE, then return a single string instead of an array.
+ *   (optional, default FALSE)
+ *
  * @return Array
  *   The output of $command as an array of strings or FALSE on error.
  */
-function vimrc_vim_commands($vim, $commands) {
+function vimrc_vim_commands($vim, $commands, $implode = FALSE) {
   $command = implode("\n", $commands);
-  drush_print_r($commands);
-  echo "command:\n$command\n--\n";
-  $lines = vimrc_vim_command($vim, $command);
-  return $lines;
+  return vimrc_vim_command($vim, $command, $implode);
 }
 
 /**
@@ -204,7 +203,10 @@ function drush_vimrc_install($path = '.') {
   $vimrc = drush_get_option('vimrc', _vimrc_vimrc_default());
   $vimfiles = drush_get_option('vimfiles', _vimrc_vimfiles_default());
 
-  if (!_vimrc_check_pathogen($vim)) {
+  if (_vimrc_check_pathogen($vim)) {
+    drush_log(dt('Pathogen plugin already installed.'));
+  }
+  else {
     // Pathogen is not installed, but the validate function already checked
     // that we can write to the vimfiles directory. Start by downloading
     // pathogen.  See https://github.com/tpope/vim-pathogen.
@@ -220,27 +222,211 @@ function drush_vimrc_install($path = '.') {
     file_put_contents("$vimfiles/autoload/pathogen.vim", $pathogen);
   }
 
-  // Now, add a line to the vimrc file. If it is empty, start with the
-  // standard one distributed with this script.
+  // Now, add a line to the vimrc file. If the vimrc file is empty, start with
+  // the standard one distributed with this script.
   $runcommands = file_get_contents($vimrc);
   // Why do I get a message that __DIR__ is undefined?
   $DIR = dirname(__FILE__);
-  $bundle = realpath($DIR . '/bundle');
+  $bundle = realpath("$DIR/bundle");
   $call_pathogen = "call pathogen#infect('$bundle')";
   if (strpos($runcommands, $call_pathogen) === FALSE) {
     if (empty($runcommands)) {
-      $runcommands = file_get_contents($DIR . '/examples/vimrc_standard.vim');
+      $runcommands = file_get_contents("$DIR/examples/vimrc_standard.vim");
     }
-    $comment = '" Following line added by drush vimrc-install on ' . date('r');
+    $lines = array(
+      '" Following line added by drush vimrc-install on ' . date('r') . '.',
+      $call_pathogen,
+      '" End of vimrc-install additions.',
+      '',
+      $runcommands,
+    );
     drush_log(dt('Rewriting vimrc file %vimrc.', array('%vimrc' => $vimrc)));
-    file_put_contents($vimrc, "$comment\n$call_pathogen\n\n$runcommands");
+    file_put_contents($vimrc, implode("\n", $lines));
+  }
+
+  // Create a bundle directory, if needed, and download plugins.
+  $bundle = "$vimfiles/bundle";
+  if (file_exists($bundle)) {
+    if (is_file($bundle)) {
+      drush_log(dt('Cannot install plugins: %bundle is a file.', array('%bundle' => $bundle)), 'warning');
+    }
+    elseif (!is_writable($bundle)) {
+      drush_log(dt('Cannot install plugins: %bundle is not writable.', array('%bundle' => $bundle)), 'warning');
+    }
+  }
+  else {
+    drush_log(dt('Creating directory %bundle.', array('%bundle' => $bundle)));
+    mkdir($bundle);
+  }
+  if (file_exists($bundle) && is_writable($bundle)) {
+    vimrc_download_plugins($vim, $vimrc, $bundle);
   }
 
   // Update the help tags, using the pathogen variant of :helptags.
   drush_log(dt('Updating help tags.', array()));
-  $lines = vimrc_vim_command($vim, 'call pathogen#helptags()');
+  vimrc_vim_command($vim, 'call pathogen#helptags()');
 
   return;
+}
+
+/**
+ * Download vim plugins.
+ *
+ * Once Pathogen is installed, other plugins can be saved in the bundle
+ * directory. The Pathogen plugin is installed by `drush vimrc-install` and
+ * cannot be handled by thihs function.
+ *
+ * @todo For now, the function ignores the 'description' and 'git uri' keys.
+ *
+ * @param String $vim
+ *   The name of the vim executable. The calling function is reponsible for
+ *   validating that $vim is executable.
+ * @param String $vimrc
+ *   Path to vimrc file. It must be writable.
+ * @param String $bundle
+ *   Path to the bundle directory, such as ~/.vim/bundle. The calling function
+ *   is responsible for making sure that this directory is writable.
+ * @param Boolean $update
+ *   (optional, default FALSE) If TRUE, then skip the check for whether the
+ *   plugin is already installed. For now, the function does not check for other
+ *   locations, it will just download to $bundle, overwriting the version there.
+ * @param Array $plugins
+ *   (optional) An array of associative arrays describing the plugins to
+ *   download. The keys are the subdirectories of $bundle where the plugins will
+ *   be downloaded. Each array should have the keys
+ *   - 'name': Display name of the plugin
+ *   - 'description': One-line decription of the plugin (optional)
+ *   - 'tarball': URI of the tarball to download, any format recognized by
+ *     drush_tarball_extract()
+ *   - 'file': Name of the plugin file as listed by :scriptnames. Optional: it
+ *     defaults to "$key.vim".
+ *   - 'git uri': URI to use if downloading with git (optional)
+ *   If $plugins is omitted or empty, then use the default list.
+ *
+ * @return Array
+ *   An array of paths to the installed plugins, using the same keys as
+ *   $plugins. If there is a problem with a plugin, then the value will be ''.
+ */
+function vimrc_download_plugins($vim, $vimrc, $bundle, $update = FALSE, $plugins = array()) {
+  if (empty($plugins)) {
+    // The install script calls this function with $plugins empty. Install the
+    // following plugins. See http://drupal.org/node/1389472.
+    $plugins['fugitive.vim'] = array(
+      'name' => 'Fugitive',
+      'description' => 'A Git wrapper so awesome, it should be illegal.',
+      'tarball' => 'https://github.com/tpope/vim-fugitive/archive/master.zip',
+      'git uri' => 'https://github.com/tpope/vim-fugitive.git',
+    );
+    $plugins['nerdcommenter'] = array(
+      'name' => 'NERDCommenter',
+      'description' => 'Vim plugin for intensely orgasmic commenting.',
+      'tarball' => 'https://github.com/scrooloose/nerdcommenter/archive/master.zip',
+      'file' => 'NERD_commenter.vim',
+      'git uri' => 'https://github.com/scrooloose/nerdcommenter.git',
+    );
+    $plugins['nerdtree'] = array(
+      'name' => 'NERDTree.vim',
+      'description' => 'A tree explorer plugin for vim.',
+      'tarball' => 'https://github.com/scrooloose/nerdtree/archive/master.zip',
+      'file' => 'NERD_tree.vim',
+      'git uri' => 'https://github.com/scrooloose/nerdtree.git',
+    );
+    $plugins['snipmate'] = array(
+      'name' => 'Snipmate',
+      'description' => 'SnipMate.vim aims to be a concise vim script that implements some of TextMate\'s snippets features in Vim.',
+      'tarball' => 'https://github.com/msanders/snipmate.vim/archive/master.zip',
+      'file' => 'snipMate.vim',
+      'git uri' => 'https://github.com/msanders/snipmate.vim.git',
+    );
+    $plugins['syntastic'] = array(
+      'name' => 'Syntastic',
+      'description' => 'Syntax checking hacks for vim.',
+      'tarball' => 'https://github.com/scrooloose/syntastic/archive/master.zip',
+      'git uri' => 'https://github.com/scrooloose/syntastic.git',
+    );
+    $plugins['tagbar'] = array(
+      'name' => 'Tagbar',
+      'description' => 'Vim plugin that displays tags in a window, ordered by class etc.',
+      'tarball' => 'https://github.com/majutsushi/tagbar/archive/master.zip',
+      'git uri' => 'https://github.com/majutsushi/tagbar.git',
+    );
+  }
+
+  // Find out which plugins are installed.
+  drush_log(dt('Checking installed plugins.'));
+  $lines = array(
+    'source ' . $vimrc,
+    'runtime! plugin/**/*.vim',
+    'scriptnames',
+  );
+  $message = vimrc_vim_commands($vim, $lines, TRUE);
+
+  // For each plugin, check whether it is installed. If not, then download the
+  // tarball and extract it to $bundle.
+  $paths = array();
+  foreach ($plugins as $plugin => $info) {
+    $paths[$plugin] = '';
+    $info += array('file' => "$plugin.vim");
+    if (!$update && preg_match("#$plugin#m", $message)) {
+      drush_log(dt('Plugin %plugin already installed.', array('%plugin' => $info['name'])));
+      continue;
+    }
+    $tempdir = drush_tempdir();
+    $tarball = basename($info['tarball']);
+    // See http://drupal.org/node/1642444#comment-6742834.
+    if (!$path = _vimrc_download_file($info['tarball'], "$tempdir/$tarball")) {
+      drush_log(dt('Failed to download %plugin from @uri.', array(
+        '%plugin' => $info['name'],
+        '@uri' => $info['tarball'],
+      )));
+    }
+    elseif (!$file_list = drush_tarball_extract($path, $tempdir, TRUE)) {
+      drush_log(dt('Failed to extract %plugin from @path to @bundle.', array(
+        '%plugin' => $info['name'],
+        '@path' => $path,
+        '@bundle' => $bundle,
+      )));
+    }
+    else {
+      // Cribbed from package_handler_download_project().
+      $project_dir = drush_trim_path(array_shift($file_list));
+      // We will get an error if "$bundle/$plugin" exists.
+      drush_move_dir("$tempdir/$project_dir", "$bundle/$plugin");
+      $paths[$plugin] = "$bundle/$plugin";
+      drush_log(dt('Installed %plugin.', array('%plugin' => $info['name'])));
+    }
+  }
+
+  return $paths;
+}
+
+/**
+ * Poor substitute for _drush_download_file(), add --no-check-certificate.
+ * See http://drupal.org/node/1642444#comment-6742834
+ */
+function _vimrc_download_file($url, $destination, $overwrite = TRUE) {
+  static $use_wget;
+  if ($use_wget === NULL) {
+    $use_wget = drush_shell_exec('which wget');
+  }
+
+  $destination_tmp = drush_tempnam('download_file');
+  if ($use_wget) {
+    drush_shell_exec("wget -q --no-check-certificate --timeout=30 -O %s %s", $destination_tmp, $url);
+  }
+  else {
+    drush_shell_exec("curl --insecure --fail -s -L --connect-timeout 30 -o %s %s", $destination_tmp, $url);
+  }
+  if (!drush_file_not_empty($destination_tmp) && $file = @file_get_contents($url)) {
+    @file_put_contents($destination_tmp, $file);
+  }
+  if (!drush_file_not_empty($destination_tmp)) {
+    // Download failed.
+    return FALSE;
+  }
+
+  drush_move_dir($destination_tmp, $destination, $overwrite);
+  return $destination;
 }
 
 /**
