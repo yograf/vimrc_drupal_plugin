@@ -254,14 +254,16 @@ LOCAL MAPPINGS                                          *drupal-local-maps*
 The ftplugin file also defines the following buffer-local mappings:
 
                                                      *drupal-api* *drupal-\da*
-\da     Lookup the API docs for a drupal function under cursor.
+\da     Look up the API docs for a drupal function under cursor and open it in
+        a web browser.
                                                     *drupal-hook* *drupal-\dh*
-\dh     Lookup the API docs for a hook implemented by the drupal function
-        under the cursor.
+\dh     Look up the API docs for a hook implemented by the drupal function
+        under the cursor and open it in a web browser.
                                                  *drupal-contrib* *drupal-\dc*
 \dc     Same as \da but use http://drupalcontrib.org/.
                                               *drupal-drush-API* *drupal-\dda*
-\dda    Lookup the API docs for a drush function under cursor.
+\dda    Look up the API docs for a drush function under cursor and open it in
+        a web browser.
                                                 *drupal-variable* *drupal-\dv*
 \dv     Get the value of the drupal variable under cursor.  (Requires drush.)
 
