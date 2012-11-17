@@ -26,50 +26,50 @@ snippet drupal_goto
 snippet hook_block
 	
 	/**
-	 * Implementation of hook_block_info()
+	 * Implements hook_block_info().
 	 */
 	function `Filename()`_block_info() {
 	  ${1:// Your code here}
 	}
 	
 	/**
-	 * Implementation of hook_block_save()
+	 * Implements hook_block_save().
 	 */
 	function `Filename()`_block_save() {
 	}
 	
 	/**
-	 * Implementation of hook_block_view()
+	 * Implements hook_block_view().
 	 */
 	function `Filename()`_block_view() {
 	}
 	
 	/**
-	 * Implementation of hook_block_configure()
+	 * Implements hook_block_configure().
 	 */
 	function `Filename()`_block_configure() {
 	}
 	
 	/**
-	 * Implementation of hook_block_list_alter()
+	 * Implements hook_block_list_alter().
 	 */
 	function `Filename()`_block_list_alter() {
 	}
 	
 	/**
-	 * Implementation of hook_block_info_alter()
+	 * Implements hook_block_info_alter().
 	 */
 	function `Filename()`_block_info_alter() {
 	}
 	
 	/**
-	 * Implementation of hook_block_view_alter()
+	 * Implements hook_block_view_alter().
 	 */
 	function `Filename()`_block_view_alter() {
 	}
 	
 	/**
-	 * Implementation of hook_block_view_MODULE_DELTA_alter()
+	 * Implements hook_block_view_MODULE_DELTA_alter().
 	 */
 	function `Filename()`_block_view_MODULE_DELTA_alter() {
 	}
@@ -78,56 +78,56 @@ snippet hook_block
 snippet hook_comment
 	
 	/**
-	 * Implementation of hook_comment_view()
+	 * Implements hook_comment_view().
 	 */
 	function `Filename()`_comment_view($comment, $view_mode, $langcode) {
 	  ${1:// Your code here}
 	}
 	
 	/**
-	 * Implementation of hook_comment_load()
+	 * Implements hook_comment_load().
 	 */
 	function `Filename()`_comment_load($comments) {
 	}
 	
 	/**
-	 * Implementation of hook_comment_update()
+	 * Implements hook_comment_update().
 	 */
 	function `Filename()`_comment_update($comment) {
 	}
 	
 	/**
-	 * Implementation of hook_comment_insert()
+	 * Implements hook_comment_insert().
 	 */
 	function `Filename()`_comment_insert($comment) {
 	}
 	
 	/**
-	 * Implementation of hook_comment_delete()
+	 * Implements hook_comment_delete().
 	 */
 	function `Filename()`_comment_delete($comment) {
 	}
 	
 	/**
-	 * Implementation of hook_comment_presave()
+	 * Implements hook_comment_presave().
 	 */
 	function `Filename()`_comment_presave($comment) {
 	}
 	
 	/**
-	 * Implementation of hook_comment_publish()
+	 * Implements hook_comment_publish().
 	 */
 	function `Filename()`_comment_publish($comment) {
 	}
 	
 	/**
-	 * Implementation of hook_comment_unpublish()
+	 * Implements hook_comment_unpublish().
 	 */
 	function `Filename()`_comment_unpublish($comment) {
 	}
 	
 	/**
-	 * Implementation of hook_comment_view_alter()
+	 * Implements hook_comment_view_alter().
 	 */
 	function `Filename()`_comment_view_alter(&$build) {
 	}
@@ -136,20 +136,20 @@ snippet hook_comment
 snippet hook_node_type
 	
 	/**
-	 * Implementation of hook_node_type_delete()
+	 * Implements hook_node_type_delete().
 	 */
 	function `Filename()`_node_type_delete($info) {
 	  ${1:// Your code here}
 	}
 	
 	/**
-	 * Implementation of hook_node_type_insert()
+	 * Implements hook_node_type_insert().
 	 */
 	function `Filename()`_node_type_insert($info) {
 	}
 	
 	/**
-	 * Implementation of hook_node_type_update()
+	 * Implements hook_node_type_update().
 	 */
 	function `Filename()`_node_type_update($info) {
 	}
@@ -158,7 +158,7 @@ snippet hook_node_type
 snippet hook_permission
 	
 	/**
-	 * Implementation of hook_permission()
+	 * Implements hook_permission().
 	 */
 	function `Filename()`_permission() {
 		return array('${1:/* permission */}' => array(
@@ -172,7 +172,7 @@ snippet hook_permission
 
 snippet hook_requirements
 	/*
-	 * Implementation of hook_requirements()
+	 * Implements hook_requirements().
 	 * @param string $phase
 	 *  The phase in which hook_requirements is run:
 	 *    'install': the module is being installed.
@@ -205,7 +205,7 @@ snippet hook_requirements
 
 snippet hook_update_N
 	/*
-	 * Implementation of hook_update_N().
+	 * Implements hook_update_N().
 	 * @see http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_update_N/7
 	 * @return array $ret
 	 *  An array with the results of the calls to update_sql().

@@ -44,7 +44,7 @@ snippet t
 snippet hook_block
 	
 	/**
-	 * Implementation of hook_block()
+	 * Implements hook_block().
 	 */
 	function `Filename()`_block($op = 'list', $delta = 0, $edit = array()) {
 		switch ($op) {
@@ -64,7 +64,7 @@ snippet hook_block
 snippet hook_comment
 	
 	/**
-	 * Implementation of hook_comment()
+	 * Implements hook_comment().
 	 */
 	function `Filename()`_comment(&$a1, $op) {
 		switch ($op) {
@@ -90,7 +90,7 @@ snippet hook_comment
 snippet hook_node_type
 	
 	/**
-	 * Implementation of hook_node_type()
+	 * Implements hook_node_type().
 	 */
 	function `Filename()`_node_type($op, $info) {
 		switch ($op) {
@@ -108,7 +108,7 @@ snippet hook_node_type
 snippet hook_nodeapi
 	
 	/**
-	 * Implementation of hook_nodeapi()
+	 * Implements hook_nodeapi().
 	 */
 	function `Filename()`_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 		switch ($op) {
@@ -150,7 +150,7 @@ snippet hook_nodeapi
 snippet hook_perm
 	
 	/**
-	 * Implementation of hook_perm()
+	 * Implements hook_perm().
 	 */
 	function `Filename()`_perm() {
 		return array('${1:/* permission */}');
@@ -159,7 +159,7 @@ snippet hook_perm
 
 snippet hook_requirements
 	/*
-	 * Implementation of hook_requirements()
+	 * Implements hook_requirements().
 	 * @param string $phase
 	 *  The phase in which hook_requirements is run:
 	 *    'install': the module is being installed.
@@ -192,7 +192,7 @@ snippet hook_requirements
 snippet hook_schema
 	
 	/**
-	 * Implementation of hook_schema()
+	 * Implements hook_schema().
 	 */
 	function `Filename()`_schema() {
 		$schema['${1:table}'] = array(
@@ -220,7 +220,7 @@ snippet hook_schema
 snippet hook_taxonomy
 	
 	/**
-	 * Implementation of hook_taxonomy()
+	 * Implements hook_taxonomy().
 	 */
 	function `Filename()`_taxonomy($op, $type, $array = NULL) {
 		switch ($op) {
@@ -237,7 +237,7 @@ snippet hook_taxonomy
 
 snippet hook_update_N
 	/*
-	 * Implementation of hook_update_N().
+	 * Implements hook_update_N().
 	 * @see http://api.drupal.org/api/drupal/developer--hooks--install.php/function/hook_update_N/6
 	 * @return array $ret
 	 *  An array with the results of the calls to update_sql().
@@ -253,7 +253,7 @@ snippet hook_update_N
 snippet hook_user
 	
 	/**
-	 * Implementation of hook_user()
+	 * Implements hook_user().
 	 */
 	function `Filename()`_user($op, &$edit, &$account, $category = NULL) {
 		switch ($op) {
@@ -293,7 +293,7 @@ snippet hook_user
 snippet hook_views_api
 	
 	/**
-	 * Implementation of hook_views_api()
+	 * Implements hook_views_api().
 	 */
 	function `Filename()`_views_api() {
 		return array(
@@ -306,7 +306,7 @@ snippet hook_views_api
 snippet hook_views_query_alter
 	
 	/**
-	 * Implementation of hook_views_query_alter()
+	 * Implements hook_views_query_alter().
 	 */
 	function `Filename()`_views_query_alter(&$view, &$query) {
 		${2:// Your code here.}
