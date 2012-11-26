@@ -120,14 +120,14 @@ function drush_vimrc_install_validate() {
  * Return the default vimfiles directory, depending on the OS.
  */
 function _vimrc_vimfiles_default() {
-    return $_ENV['HOME'] . (drush_is_windows() ?  '/vimfiles' : '/.vim');
+    return drush_server_home() . (drush_is_windows() ?  '/vimfiles' : '/.vim');
 }
 
 /**
  * Return the default vimrc file, depending on the OS.
  */
 function _vimrc_vimrc_default() {
-    return $_ENV['HOME'] . (drush_is_windows() ?  '/_vimrc' : '/.vimrc');
+    return drush_server_home() . (drush_is_windows() ?  '/_vimrc' : '/.vimrc');
 }
 
 /**
@@ -162,10 +162,9 @@ function _vimrc_check_pathogen($vim) {
  *   The output of $command as an array of strings or FALSE on error.
  */
 function vimrc_vim_command($vim, $command, $implode = FALSE) {
-  // TODO:  Does this work on Windows?
   $infile = drush_save_data_to_temp_file("$command\nqa!\n");
   $vimlog = drush_tempnam('vimrc');
-  exec("$vim -e -s -N -V0$vimlog < $infile", $output, $retval);
+  exec("$vim -e -s -N -V0$vimlog -S $infile", $output, $retval);
   if ($retval > 1) {
     return FALSE;
   }
@@ -210,9 +209,11 @@ function drush_vimrc_install($path = '.') {
     // Pathogen is not installed, but the validate function already checked
     // that we can write to the vimfiles directory. Start by downloading
     // pathogen.  See https://github.com/tpope/vim-pathogen.
-    drush_log(dt('Creating directory %autoload.',
-      array('%autoload' => "$vimfiles/autoload")));
-    mkdir("$vimfiles/autoload");
+    if (!file_exists("$vimfiles/autoload")) {
+      drush_log(dt('Creating directory %autoload.',
+        array('%autoload' => "$vimfiles/autoload")));
+      mkdir("$vimfiles/autoload");
+    }
     $url =
       'https://raw.github.com/tpope/vim-pathogen/master/autoload/pathogen.vim';
     drush_log(dt('Downloading pathogen from %url.', array('%url' => $url)));
@@ -222,8 +223,11 @@ function drush_vimrc_install($path = '.') {
     file_put_contents("$vimfiles/autoload/pathogen.vim", $pathogen);
   }
 
-  // Now, add a line to the vimrc file. If the vimrc file is empty, start with
+  // Now, add lines to the vimrc file. If the vimrc file is empty, start with
   // the standard one distributed with this script.
+  // 1. Set 'nocompatible' in case this is a system-wide vimrc file.
+  // 2. Tell pathogen about the files in this project.
+  // 3. Tell pathogen about the plugins in $vimfiles/bundle.
   $runcommands = file_get_contents($vimrc);
   // Why do I get a message that __DIR__ is undefined?
   $DIR = dirname(__FILE__);
@@ -233,9 +237,13 @@ function drush_vimrc_install($path = '.') {
     if (empty($runcommands)) {
       $runcommands = file_get_contents("$DIR/examples/vimrc_standard.vim");
     }
+    // Avoid E_STRICT and E_WARNING messages from date().
+    date_default_timezone_set('UTC');
     $lines = array(
-      '" Following line added by drush vimrc-install on ' . date('r') . '.',
+      '" Following lines added by drush vimrc-install on ' . date('r') . '.',
+      'set nocompatible',
       $call_pathogen,
+      "call pathogen#infect('$vimfiles/bundle')",
       '" End of vimrc-install additions.',
       '',
       $runcommands,
@@ -311,7 +319,7 @@ function vimrc_download_plugins($vim, $vimrc, $bundle, $update = FALSE, $plugins
   if (empty($plugins)) {
     // The install script calls this function with $plugins empty. Install the
     // following plugins. See http://drupal.org/node/1389472.
-    $plugins['fugitive.vim'] = array(
+    $plugins['fugitive'] = array(
       'name' => 'Fugitive',
       'description' => 'A Git wrapper so awesome, it should be illegal.',
       'tarball' => 'https://github.com/tpope/vim-fugitive/archive/master.zip',
@@ -325,7 +333,7 @@ function vimrc_download_plugins($vim, $vimrc, $bundle, $update = FALSE, $plugins
       'git uri' => 'https://github.com/scrooloose/nerdcommenter.git',
     );
     $plugins['nerdtree'] = array(
-      'name' => 'NERDTree.vim',
+      'name' => 'NERDTree',
       'description' => 'A tree explorer plugin for vim.',
       'tarball' => 'https://github.com/scrooloose/nerdtree/archive/master.zip',
       'file' => 'NERD_tree.vim',
@@ -371,30 +379,40 @@ function vimrc_download_plugins($vim, $vimrc, $bundle, $update = FALSE, $plugins
       drush_log(dt('Plugin %plugin already installed.', array('%plugin' => $info['name'])));
       continue;
     }
-    $tempdir = drush_tempdir();
     $tarball = basename($info['tarball']);
+    // Bail out if the archive is in zip format and drush version < 5.5.
+    // Note that drush 5.0-dev is probably more recent than 5.5.
+    $ext = strtolower(pathinfo($tarball, PATHINFO_EXTENSION));
+    if ($ext == 'zip' && (DRUSH_MAJOR_VERSION < 5 || preg_match('/^5.[0-4]$/', DRUSH_VERSION))) {
+      drush_log(dt('Drush version 5.5+ required to expand zip archives; %plugin not installed.',
+        array('%plugin' => $info['name'])
+      ));
+      continue;
+    }
+    $tempdir = drush_tempdir();
     // See http://drupal.org/node/1642444#comment-6742834.
     if (!$path = _vimrc_download_file($info['tarball'], "$tempdir/$tarball")) {
       drush_log(dt('Failed to download %plugin from @uri.', array(
         '%plugin' => $info['name'],
         '@uri' => $info['tarball'],
       )));
+      continue;
     }
-    elseif (!$file_list = drush_tarball_extract($path, $tempdir, TRUE)) {
+    if (!$file_list = drush_tarball_extract($path, $tempdir, TRUE)) {
       drush_log(dt('Failed to extract %plugin from @path to @bundle.', array(
         '%plugin' => $info['name'],
         '@path' => $path,
         '@bundle' => $bundle,
       )));
+      continue;
     }
-    else {
-      // Cribbed from package_handler_download_project().
-      $project_dir = drush_trim_path(array_shift($file_list));
-      // We will get an error if "$bundle/$plugin" exists.
-      drush_move_dir("$tempdir/$project_dir", "$bundle/$plugin");
-      $paths[$plugin] = "$bundle/$plugin";
-      drush_log(dt('Installed %plugin.', array('%plugin' => $info['name'])));
-    }
+    // Cribbed from package_handler_download_project().
+    $project_dir = drush_trim_path(array_shift($file_list));
+    // We will get an error if "$bundle/$plugin" exists, so hope that our test
+    // above gives the right answer.
+    drush_move_dir("$tempdir/$project_dir", "$bundle/$plugin");
+    $paths[$plugin] = "$bundle/$plugin";
+    drush_log(dt('Installed %plugin.', array('%plugin' => $info['name'])));
   }
 
   return $paths;

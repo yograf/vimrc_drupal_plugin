@@ -33,6 +33,8 @@ command line, >
         $ drush @none dl vimrc
         $ drush help vimrc-install
         $ drush -v vimrc-install <options>
+If the drush version is at least 5.5, then the recommended plugins will be
+installed in the bundle/ subdirectry of your vimfiles directory.
 
 INSTALLATION WITH PATHOGEN
 
