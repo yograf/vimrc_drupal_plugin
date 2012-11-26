@@ -3,7 +3,6 @@
 let php_htmlInStrings = 1   "Syntax highlight for HTML inside PHP strings
 let php_parent_error_open = 1 "Display error for unmatch brackets
 let PHP_autoformatcomment = 0
-let PHP_removeCRwhenUnix = 1
 
 " {{{
 " Everything from here on assumes that autocommands are available.

@@ -23,6 +23,11 @@ set ruler                   "Show line and column number
 set formatoptions=1         "Don't wrap text after a one-letter word
 set linebreak               "Break lines when appropriate
 
+" Enforce consistent line endings: if 'ff' is set to "unix" and there are any
+" stray '\r' characters at ends of lines, then automatically remove them. See
+" $VIMRUNTIME/indent/php.vim .
+let PHP_removeCRwhenUnix = 1
+
 " Persistent Undo (vim 7.3 and later)
 if exists('&undofile') && !&undofile
   set undodir=~/.vim_runtime/undodir

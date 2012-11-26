@@ -1,6 +1,48 @@
 " We never :set ft=drupal.  This filetype is always added to another, as in
 " :set ft=php.drupal or :set ft=css.drupal.
 
+" Syntastic settings, adapted from
+" echodittolabs.org/drupal-coding-standards-vim-code-sniffer-syntastic-regex
+if &ft =~ '\<php\>' && exists('loaded_syntastic_plugin') && executable('phpcs')
+  let g:syntastic_phpcs_conf = ' --standard=DrupalCodingStandard'
+	\ . ' --extensions=php,module,inc,install,test,profile,theme'
+endif
+
+" The tags file can be used for PHP omnicompletion even if $DRUPAL_ROOT == ''.
+" If $DRUPAL_ROOT is set correctly, then the tags file can also be used for
+" tag searches. Look for tags files in the project (module, theme, etc.)
+" directory, the Drupal root directory, and in ../tagfiles/.
+" TODO:  If we do not know which version of Drupal core, add no tags file or
+" all?
+let tags = []
+if strlen(b:Drupal_info.INFO_FILE)
+  let tags += [fnamemodify(b:Drupal_info.INFO_FILE, ':p:h') . '/tags']
+endif
+if strlen(b:Drupal_info.DRUPAL_ROOT)
+  let tags += [fnamemodify(b:Drupal_info.DRUPAL_ROOT, ':p:h') . '/tags']
+endif
+if strlen(b:Drupal_info.CORE)
+  let tagfile = 'drupal' . b:Drupal_info.CORE . '.tags'
+  " <sfile>:p = .../vimrc/bundle/vim-plugin-for-drupal/ftplugin/drupal.vim
+  let tags += [expand('<sfile>:p:h:h') . '/tagfiles/' . tagfile]
+endif
+for tagfile in tags
+  " Bail out if the tags file has already been added.
+  if stridx(&l:tags, tagfile) == -1
+    " This is like :setlocal tags += ... but without having to escape special
+    " characters.
+    " :help :let-option
+    let &l:tags .= ',' . tagfile
+  endif
+endfor
+
+" The usual variable, b:did_ftplugin, is already set by the ftplugin for the
+" primary filetype, so use a custom variable. The Syntastic and tags setting
+" above are global, so check them each time we enter the buffer in case they
+" have been changed.  Everything below is buffer-local.
+if exists("b:did_drupal_ftplugin") | finish | endif
+let b:did_drupal_ftplugin = 1
+
 setl nojoinspaces            "No second space when joining lines that end in "."
 setl autoindent              "Auto indent based on previous line
 setl smartindent             "Smart autoindenting on new line
@@ -18,23 +60,19 @@ setl formatoptions+=croql
 "  +q:  Format comments using q<motion>.
 "  +l:  Do not break a comment line if it is long before you start.
 
-" Syntastic settings, adapted from
-" echodittolabs.org/drupal-coding-standards-vim-code-sniffer-syntastic-regex
-if &ft =~ '\<php\>' && exists('loaded_syntastic_plugin') && executable('phpcs')
-  let g:syntastic_phpcs_conf = ' --standard=DrupalCodingStandard'
-	\ . ' --extensions=php,module,inc,install,test,profile,theme'
-endif
-
 " {{{ PHP specific settings.
 " In ftdetect/drupal.vim we set ft=php.drupal.  This means that the settings
 " here will come after those set by the PHP ftplugins.  In particular, we can
 " override the 'comments' setting.
 
 if &ft =~ '\<php\>'
-  setl ignorecase              "Ignore case in search
-  setl smartcase               "Only ignore case when all letters are lowercase
-  "  Format comment blocks.  Just type / on a new line to close.
-  "  Recognize // (but not #) style comments.
+  " In principle, PHP is case-insensitive, but Drupal coding standards pay
+  " attention to case. This option affects searching in files and also tag
+  " searches and code completion. If you want a case-insensitive search, start
+  " the pattern with '\c'.
+  setl noignorecase
+  " Format comment blocks.  Just type / on a new line to close.
+  " Recognize // (but not #) style comments.
   setl comments=sr:/**,m:*\ ,ex:*/,://
 endif
 " }}} PHP specific settings.
@@ -73,34 +111,6 @@ function! s:BufEnter()
   endif " exists('*ExtractSnips')
 endfun
 " }}} s:BufEnter()
-
-" The tags file can be used for PHP omnicompletion even if $DRUPAL_ROOT == ''.
-" If $DRUPAL_ROOT is set correctly, then the tags file can also be used for
-" tag searches. Look for tags files in the project (module, theme, etc.)
-" directory, the Drupal root directory, and in ../tagfiles/.
-" TODO:  If we do not know which version of Drupal core, add no tags file or
-" all?
-let tags = []
-if strlen(b:Drupal_info.INFO_FILE)
-  let tags += [fnamemodify(b:Drupal_info.INFO_FILE, ':p:h') . '/tags']
-endif
-if strlen(b:Drupal_info.DRUPAL_ROOT)
-  let tags += [fnamemodify(b:Drupal_info.DRUPAL_ROOT, ':p:h') . '/tags']
-endif
-if strlen(b:Drupal_info.CORE)
-  let tagfile = 'drupal' . b:Drupal_info.CORE . '.tags'
-  " <sfile>:p = .../vimrc/bundle/vim-plugin-for-drupal/ftplugin/drupal.vim
-  let tags += [expand('<sfile>:p:h:h') . '/tagfiles/' . tagfile]
-endif
-for tagfile in tags
-  " Bail out if the tags file has already been added.
-  if stridx(&l:tags, tagfile) == -1
-    " This is like :setlocal tags += ... but without having to escape special
-    " characters.
-    " :help :let-option
-    let &l:tags .= ',' . tagfile
-  endif
-endfor
 
 if !exists('*s:OpenURL')
 
