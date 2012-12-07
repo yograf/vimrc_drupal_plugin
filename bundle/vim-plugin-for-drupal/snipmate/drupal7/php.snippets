@@ -2,7 +2,7 @@
 
 snippet markup
 	$form['${1:/* form element */}'] = array(
-		'#markup' => '<${2:div}>' . '${3:/* markup */}' . '</$2>',
+	  '#markup' => '<${2:div}>' . '${3:/* markup */}' . '</$2>',
 	);
 
 ## Database functions
@@ -24,154 +24,146 @@ snippet drupal_goto
 ## Hooks
 
 snippet hook_block
-	
 	/**
 	 * Implements hook_block_info().
 	 */
 	function `Filename()`_block_info() {
 	  ${1:// Your code here}
 	}
-	
+
 	/**
 	 * Implements hook_block_save().
 	 */
 	function `Filename()`_block_save() {
 	}
-	
+
 	/**
 	 * Implements hook_block_view().
 	 */
 	function `Filename()`_block_view() {
 	}
-	
+
 	/**
 	 * Implements hook_block_configure().
 	 */
 	function `Filename()`_block_configure() {
 	}
-	
+
 	/**
 	 * Implements hook_block_list_alter().
 	 */
 	function `Filename()`_block_list_alter() {
 	}
-	
+
 	/**
 	 * Implements hook_block_info_alter().
 	 */
 	function `Filename()`_block_info_alter() {
 	}
-	
+
 	/**
 	 * Implements hook_block_view_alter().
 	 */
 	function `Filename()`_block_view_alter() {
 	}
-	
+
 	/**
 	 * Implements hook_block_view_MODULE_DELTA_alter().
 	 */
 	function `Filename()`_block_view_MODULE_DELTA_alter() {
 	}
-	
 
 snippet hook_comment
-	
 	/**
 	 * Implements hook_comment_view().
 	 */
 	function `Filename()`_comment_view($comment, $view_mode, $langcode) {
 	  ${1:// Your code here}
 	}
-	
+
 	/**
 	 * Implements hook_comment_load().
 	 */
 	function `Filename()`_comment_load($comments) {
 	}
-	
+
 	/**
 	 * Implements hook_comment_update().
 	 */
 	function `Filename()`_comment_update($comment) {
 	}
-	
+
 	/**
 	 * Implements hook_comment_insert().
 	 */
 	function `Filename()`_comment_insert($comment) {
 	}
-	
+
 	/**
 	 * Implements hook_comment_delete().
 	 */
 	function `Filename()`_comment_delete($comment) {
 	}
-	
+
 	/**
 	 * Implements hook_comment_presave().
 	 */
 	function `Filename()`_comment_presave($comment) {
 	}
-	
+
 	/**
 	 * Implements hook_comment_publish().
 	 */
 	function `Filename()`_comment_publish($comment) {
 	}
-	
+
 	/**
 	 * Implements hook_comment_unpublish().
 	 */
 	function `Filename()`_comment_unpublish($comment) {
 	}
-	
+
 	/**
 	 * Implements hook_comment_view_alter().
 	 */
 	function `Filename()`_comment_view_alter(&$build) {
 	}
-	
 
 snippet hook_node_type
-	
 	/**
 	 * Implements hook_node_type_delete().
 	 */
 	function `Filename()`_node_type_delete($info) {
 	  ${1:// Your code here}
 	}
-	
+
 	/**
 	 * Implements hook_node_type_insert().
 	 */
 	function `Filename()`_node_type_insert($info) {
 	}
-	
+
 	/**
 	 * Implements hook_node_type_update().
 	 */
 	function `Filename()`_node_type_update($info) {
 	}
-	
 
 snippet hook_permission
-	
 	/**
 	 * Implements hook_permission().
 	 */
 	function `Filename()`_permission() {
-		return array('${1:/* permission */}' => array(
+	  return array('${1:/* permission */}' => array(
 	            'title' => t('${2}'),
 	            'description' => t('${3:/* optional */}'),
 	            'restrict access' => t('${4:/* optional */}'),
 	            'warning' => t('${5:/* optional */}'),
 	          ));
 	}
-	
 
 snippet hook_requirements
-	/*
+	/**
 	 * Implements hook_requirements().
 	 * @param string $phase
 	 *  The phase in which hook_requirements is run:
@@ -196,15 +188,14 @@ snippet hook_requirements
 	 */
 	function `Filename()`_requirements($phase) {
 	  $requirements = array();
-	
+
 	  ${1:// Your code here.}
-	
+
 	  return $requirements;
 	}
-	
 
 snippet hook_update_N
-	/*
+	/**
 	 * Implements hook_update_N().
 	 * @see http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_update_N/7
 	 * @return array $ret
@@ -212,9 +203,9 @@ snippet hook_update_N
 	 */
 	function `Filename()`_update_N(&$sandbox) {
 	  $ret = array();
-	
+
 	  ${1:// Your code here.}
-	
+
 	  return $ret;
 	}
 
