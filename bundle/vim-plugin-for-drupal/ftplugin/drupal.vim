@@ -40,7 +40,7 @@ endfor
 " primary filetype, so use a custom variable. The Syntastic and tags setting
 " above are global, so check them each time we enter the buffer in case they
 " have been changed.  Everything below is buffer-local.
-if exists("b:did_drupal_ftplugin") | finish | endif
+if exists("b:did_drupal_ftplugin")  && exists("b:did_ftplugin") | finish | endif
 let b:did_drupal_ftplugin = 1
 
 setl nojoinspaces            "No second space when joining lines that end in "."
