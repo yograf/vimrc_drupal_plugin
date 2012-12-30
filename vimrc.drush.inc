@@ -228,32 +228,30 @@ function drush_vimrc_install($path = '.') {
   // 1. Set 'nocompatible' in case this is a system-wide vimrc file.
   // 2. Tell pathogen about the files in this project.
   // 3. Tell pathogen about the plugins in $vimfiles/bundle.
-  $runcommands = file_get_contents($vimrc);
   // Why do I get a message that __DIR__ is undefined?
   $DIR = dirname(__FILE__);
-  $bundle = realpath("$DIR/bundle");
-  $call_pathogen = "call pathogen#infect('$bundle')";
-  if (strpos($runcommands, $call_pathogen) === FALSE) {
+  $vimrcbundle = realpath("$DIR/bundle");
+  $bundle = "$vimfiles/bundle";
+  // Avoid E_STRICT and E_WARNING messages from date().
+  date_default_timezone_set('UTC');
+  $vimrclines = array(
+    '" Following lines added by drush vimrc-install on ' . date('r') . '.',
+    'set nocompatible',
+    "call pathogen#infect('$vimrcbundle')",
+    "call pathogen#infect('$bundle')",
+    '" End of vimrc-install additions.',
+    '',
+  );
+  $runcommands = file_get_contents($vimrc);
+  if (strpos($runcommands, "call pathogen#infect('$vimrcbundle')") === FALSE) {
     if (empty($runcommands)) {
       $runcommands = file_get_contents("$DIR/examples/vimrc_standard.vim");
     }
-    // Avoid E_STRICT and E_WARNING messages from date().
-    date_default_timezone_set('UTC');
-    $lines = array(
-      '" Following lines added by drush vimrc-install on ' . date('r') . '.',
-      'set nocompatible',
-      $call_pathogen,
-      "call pathogen#infect('$vimfiles/bundle')",
-      '" End of vimrc-install additions.',
-      '',
-      $runcommands,
-    );
     drush_log(dt('Rewriting vimrc file %vimrc.', array('%vimrc' => $vimrc)));
-    file_put_contents($vimrc, implode("\n", $lines));
+    file_put_contents($vimrc, implode("\n", $vimrclines) . $runcommands);
   }
 
   // Create a bundle directory, if needed, and download plugins.
-  $bundle = "$vimfiles/bundle";
   if (file_exists($bundle)) {
     if (is_file($bundle)) {
       drush_log(dt('Cannot install plugins: %bundle is a file.', array('%bundle' => $bundle)), 'warning');
@@ -272,7 +270,8 @@ function drush_vimrc_install($path = '.') {
 
   // Update the help tags, using the pathogen variant of :helptags.
   drush_log(dt('Updating help tags.', array()));
-  vimrc_vim_command($vim, 'call pathogen#helptags()');
+  $vimrclines[] =  'call pathogen#helptags()';
+  vimrc_vim_commands($vim, $vimrclines);
 
   return;
 }
