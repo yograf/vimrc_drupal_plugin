@@ -486,6 +486,13 @@ function drush_vimrc_tag_gen($path = '.') {
   $tag_file = realpath(drush_get_option('tag-file', 'tags'));
   $include_js = drush_get_option('include-js', 'no');
   $include_test = drush_get_option('include-test', 'no');
+  $portable = (drush_get_option('make-portable', 'no') == 'yes');
+  if ($portable) {
+    $path = realpath($path);
+    // Replace the path (but not any trailing '/') with '$DRUPAL_ROOT'.
+    $shortpath = rtrim($path, '/');
+    $length = strlen($shortpath);
+  }
 
   // Figure out which ctags options to use.
   $excludes = array('.git');
@@ -501,29 +508,31 @@ function drush_vimrc_tag_gen($path = '.') {
   }
   $options = "-R --totals --extra=+f --langmap=$langmap --php-kinds=-v";
   $options .= ' --exclude=' . implode(' --exclude=', $excludes);
+
   // Run ctags, generating $tag_file.
   print dt('Some warning messages from ctags are normal.') . "\n\n";
   exec("$ctags -f $tag_file $options $path");
+
+  // Skip lines matching these patterns.
+  $patterns = array();
+  // Skip anything that looks like a comment.
+  $patterns[] = '#/\^\s*(\\\\/\\\\/|/\*|\*|\'\')#';
+  // Skip anything that looks like 'key' => 'value'.
+  $patterns[] = '/[\'"]#?\w+[\'"]\s*=>/';
+  // Skip anything that looks like $output .= 'lotsa text'.
+  $patterns[] = '#/\^\s*\$\w+\s*\.?\=#';
+
   // Read the file into an array.
   $lines = file($tag_file);
   $handle = fopen($tag_file, 'w');
   // Process the lines and rewrite the file.
   foreach ($lines as $line) {
-    // Skip anything that looks like a comment.
-    if (preg_match('#/\^\s*(\\\\/\\\\/|/\*|\*|\'\')#', $line) == 1) {
-      continue;
+    foreach ($patterns as $pattern) {
+      if (preg_match($pattern, $line) == 1) {
+        continue;
+      }
     }
-    // Skip anything that looks like 'key' => 'value'.
-    if (preg_match('/[\'"]#?\w+[\'"]\s*=>/', $line) == 1) {
-      continue;
-    }
-    // Skip anything that looks like $output .= 'lotsa text'.
-    if (preg_match('#/\^\s*\$\w+\s*\.?\=#', $line) == 1) {
-      continue;
-    }
-    if (drush_get_option('make-portable', 'no') == 'yes') {
-      // Replace the path (but not any trailing '/') with '$DRUPAL_ROOT'.
-      $shortpath = preg_replace('#/$#', '', $path);
+    if ($portable) {
       $line = str_replace($shortpath, '$DRUPAL_ROOT', $line);
     }
     fwrite($handle, $line);
