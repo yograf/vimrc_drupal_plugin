@@ -4,7 +4,7 @@
 " Syntastic settings, adapted from
 " echodittolabs.org/drupal-coding-standards-vim-code-sniffer-syntastic-regex
 if &ft =~ '\<php\>' && exists('loaded_syntastic_plugin') && executable('phpcs')
-  let g:syntastic_phpcs_conf = ' --standard=DrupalCodingStandard'
+  let g:syntastic_phpcs_conf = ' --standard=Drupal'
 	\ . ' --extensions=php,module,inc,install,test,profile,theme'
 endif
 
