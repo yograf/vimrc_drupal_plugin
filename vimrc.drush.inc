@@ -62,6 +62,7 @@ function drush_vimrc_install_validate() {
   // Bail out if vim is not executable or is not the right version.
   $vim = drush_get_option('vim-command', 'vim');
   $vim = escapeshellcmd($vim);
+  drush_set_option('vim-command', $vim);
   $error = '';
   // This works only if $vim is a full path.
   // if (!is_executable($vim)) {
@@ -91,6 +92,7 @@ function drush_vimrc_install_validate() {
   // Check that we can write to the vimrc file. If pathogen is not installed,
   // also check the vimfiles directory.
   $vimrc = drush_get_option('vimrc', _vimrc_vimrc_default());
+  // @todo Maybe this can be done with file_prepare_directory.
   if (!is_file($vimrc) && !touch($vimrc)) {
     $error = dt('Cannot create the vimrc file %vimrc. Specify another file with --vimrc.',
       array('%vimrc' => $vimrc));
@@ -198,7 +200,6 @@ function vimrc_vim_commands($vim, $commands, $implode = FALSE) {
  */
 function drush_vimrc_install($path = '.') {
   $vim = drush_get_option('vim-command', 'vim');
-  $vim = escapeshellcmd($vim);
   $vimrc = drush_get_option('vimrc', _vimrc_vimrc_default());
   $vimfiles = drush_get_option('vimfiles', _vimrc_vimfiles_default());
 
@@ -212,7 +213,7 @@ function drush_vimrc_install($path = '.') {
     if (!file_exists("$vimfiles/autoload")) {
       drush_log(dt('Creating directory %autoload.',
         array('%autoload' => "$vimfiles/autoload")));
-      mkdir("$vimfiles/autoload");
+      drush_op('mkdir', "$vimfiles/autoload");
     }
     $url =
       'https://raw.github.com/tpope/vim-pathogen/master/autoload/pathogen.vim';
@@ -220,7 +221,7 @@ function drush_vimrc_install($path = '.') {
     $pathogen = file_get_contents($url);
     drush_log(dt('Saving it to %pathogen.',
       array('%pathogen' => "$vimfiles/autoload/pathogen")));
-    file_put_contents("$vimfiles/autoload/pathogen.vim", $pathogen);
+    drush_op('file_put_contents', "$vimfiles/autoload/pathogen.vim", $pathogen);
   }
 
   // Now, add lines to the vimrc file. If the vimrc file is empty, start with
@@ -248,7 +249,7 @@ function drush_vimrc_install($path = '.') {
       $runcommands = file_get_contents("$DIR/examples/vimrc_standard.vim");
     }
     drush_log(dt('Rewriting vimrc file %vimrc.', array('%vimrc' => $vimrc)));
-    file_put_contents($vimrc, implode("\n", $vimrclines) . $runcommands);
+    drush_op('file_put_contents', $vimrc, implode("\n", $vimrclines) . $runcommands);
   }
 
   // Create a bundle directory, if needed, and download plugins.
@@ -262,7 +263,7 @@ function drush_vimrc_install($path = '.') {
   }
   else {
     drush_log(dt('Creating directory %bundle.', array('%bundle' => $bundle)));
-    mkdir($bundle);
+    drush_op('mkdir', $bundle);
   }
   if (file_exists($bundle) && is_writable($bundle)) {
     vimrc_download_plugins($vim, $vimrc, $bundle);
@@ -271,7 +272,7 @@ function drush_vimrc_install($path = '.') {
   // Update the help tags, using the pathogen variant of :helptags.
   drush_log(dt('Updating help tags.', array()));
   $vimrclines[] =  'call pathogen#helptags()';
-  vimrc_vim_commands($vim, $vimrclines);
+  drush_op('vimrc_vim_commands', $vim, $vimrclines);
 
   return;
 }
@@ -409,7 +410,7 @@ function vimrc_download_plugins($vim, $vimrc, $bundle, $update = FALSE, $plugins
     $project_dir = drush_trim_path(array_shift($file_list));
     // We will get an error if "$bundle/$plugin" exists, so hope that our test
     // above gives the right answer.
-    drush_move_dir("$tempdir/$project_dir", "$bundle/$plugin");
+    drush_op('drush_move_dir', "$tempdir/$project_dir", "$bundle/$plugin");
     $paths[$plugin] = "$bundle/$plugin";
     drush_log(dt('Installed %plugin.', array('%plugin' => $info['name'])));
   }
@@ -453,6 +454,7 @@ function drush_vimrc_tag_gen_validate() {
   // Bail out if ctags is not executable or is not the right version.
   $ctags = drush_get_option('ctags', 'ctags');
   $ctags = escapeshellcmd($ctags);
+  drush_set_option('ctags', $ctags);
   exec("$ctags --version", $output, $retval);
   if ($retval || !preg_match('/^Exuberant Ctags/', $output[0])) {
     return drush_set_error('DRUSH_APPLICATION_ERROR', dt('Make sure that Exuberant Ctags is installed (http://ctags.sourceforge.net/) and specify the path with (for example) --ctags=/usr/local/bin/ctags'));
@@ -460,8 +462,9 @@ function drush_vimrc_tag_gen_validate() {
   // Check that the tags file is writable.
   $tag_file = drush_get_option('tag-file', 'tags');
   touch($tag_file);
-  $path = realpath($tag_file);
-  if (!is_writable($path)) {
+  $tag_file = realpath($tag_file);
+  drush_set_option('tag-file', $tag_file);
+  if (!is_writable($tag_file)) {
     return drush_set_error('DRUSH_PERM_ERROR', dt('Cannot write the tags file. Specify another path with --tag-file=path/to/tags'));
   }
   // Check that the boolean flags are "yes" or "no".
@@ -479,11 +482,9 @@ function drush_vimrc_tag_gen_validate() {
  * Implements drush_hook_COMMAND().
  */
 function drush_vimrc_tag_gen($path = '.') {
-  // Get the option values.  This duplicates a few lines of the validate
-  // function. :-(
+  // Get the option values.  The validate function sets some of them.
   $ctags = drush_get_option('ctags', 'ctags');
-  $ctags = escapeshellcmd($ctags);
-  $tag_file = realpath(drush_get_option('tag-file', 'tags'));
+  $tag_file = drush_get_option('tag-file', 'tags');
   $include_js = drush_get_option('include-js', 'no');
   $include_test = drush_get_option('include-test', 'no');
   $portable = (drush_get_option('make-portable', 'no') == 'yes');
