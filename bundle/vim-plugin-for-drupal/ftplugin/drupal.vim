@@ -36,13 +36,6 @@ for tagfile in tags
   endif
 endfor
 
-" The usual variable, b:did_ftplugin, is already set by the ftplugin for the
-" primary filetype, so use a custom variable. The Syntastic and tags setting
-" above are global, so check them each time we enter the buffer in case they
-" have been changed.  Everything below is buffer-local.
-if exists("b:did_drupal_ftplugin")  && exists("b:did_ftplugin") | finish | endif
-let b:did_drupal_ftplugin = 1
-
 setl nojoinspaces            "No second space when joining lines that end in "."
 setl autoindent              "Auto indent based on previous line
 setl smartindent             "Smart autoindenting on new line
@@ -76,6 +69,13 @@ if &ft =~ '\<php\>'
   setl comments=sr:/**,m:*\ ,ex:*/,://
 endif
 " }}} PHP specific settings.
+
+" The usual variable, b:did_ftplugin, is already set by the ftplugin for the
+" primary filetype, so use a custom variable. The Syntastic and tags setting
+" above are global, so check them each time we enter the buffer in case they
+" have been changed.  Everything below is buffer-local.
+if exists("b:did_drupal_ftplugin")  && exists("b:did_ftplugin") | finish | endif
+let b:did_drupal_ftplugin = 1
 
 augroup Drupal
   autocmd! BufEnter <buffer> call s:BufEnter()
