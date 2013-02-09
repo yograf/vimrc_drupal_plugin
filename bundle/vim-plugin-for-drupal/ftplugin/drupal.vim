@@ -1,12 +1,9 @@
 " We never :set ft=drupal.  This filetype is always added to another, as in
 " :set ft=php.drupal or :set ft=css.drupal.
 
-" Syntastic settings, adapted from
-" echodittolabs.org/drupal-coding-standards-vim-code-sniffer-syntastic-regex
-if &ft =~ '\<php\>' && exists('loaded_syntastic_plugin') && executable('phpcs')
-  let g:syntastic_phpcs_conf = ' --standard=Drupal'
-	\ . ' --extensions=php,module,inc,install,test,profile,theme'
-endif
+" @var b:Drupal_info
+" drupal#DrupalInfo() will return a Dictionary containing useful information.
+let b:Drupal_info = drupal#DrupalInfo()
 
 " The tags file can be used for PHP omnicompletion even if $DRUPAL_ROOT == ''.
 " If $DRUPAL_ROOT is set correctly, then the tags file can also be used for
@@ -36,23 +33,6 @@ for tagfile in tags
   endif
 endfor
 
-setl nojoinspaces            "No second space when joining lines that end in "."
-setl autoindent              "Auto indent based on previous line
-setl smartindent             "Smart autoindenting on new line
-setl smarttab                "Respect space/tab settings
-setl expandtab               "Tab key inserts spaces
-setl tabstop=2               "Use two spaces for tabs
-setl shiftwidth=2            "Use two spaces for auto-indent
-setl textwidth=80            "Limit comment lines to 80 characters.
-setl formatoptions-=t
-setl formatoptions+=croql
-"  -t:  Do not apply 'textwidth' to code.
-"  +c:  Apply 'textwidth' to comments.
-"  +r:  Continue comments after hitting <Enter> in Insert mode.
-"  +o:  Continue comments after when using 'O' or 'o' to open a new line.
-"  +q:  Format comments using q<motion>.
-"  +l:  Do not break a comment line if it is long before you start.
-
 " {{{ PHP specific settings.
 " In ftdetect/drupal.vim we set ft=php.drupal.  This means that the settings
 " here will come after those set by the PHP ftplugins.  In particular, we can
@@ -67,6 +47,12 @@ if &ft =~ '\<php\>'
   " Format comment blocks.  Just type / on a new line to close.
   " Recognize // (but not #) style comments.
   setl comments=sr:/**,m:*\ ,ex:*/,://
+
+  " Syntastic settings, adapted from
+  " echodittolabs.org/drupal-coding-standards-vim-code-sniffer-syntastic-regex
+  if exists('loaded_syntastic_plugin') && executable('phpcs')
+    let g:syntastic_phpcs_conf = ' --standard=Drupal ' . drupaldetect#php_ext
+  endif
 endif
 " }}} PHP specific settings.
 
@@ -77,75 +63,31 @@ endif
 if exists("b:did_drupal_ftplugin")  && exists("b:did_ftplugin") | finish | endif
 let b:did_drupal_ftplugin = 1
 
+setl autoindent              "Auto indent based on previous line
+setl expandtab               "Tab key inserts spaces
+setl nojoinspaces            "No second space when joining lines that end in "."
+setl shiftwidth=2            "Use two spaces for auto-indent
+setl smartindent             "Smart autoindenting on new line
+setl smarttab                "Respect space/tab settings
+setl tabstop=2               "Use two spaces for tabs
+setl textwidth=80            "Limit comment lines to 80 characters.
+"  -t:  Do not apply 'textwidth' to code.
+"  +c:  Apply 'textwidth' to comments.
+"  +r:  Continue comments after hitting <Enter> in Insert mode.
+"  +o:  Continue comments after when using 'O' or 'o' to open a new line.
+"  +q:  Format comments using q<motion>.
+"  +l:  Do not break a comment line if it is long before you start.
+setl formatoptions-=t
+setl formatoptions+=croql
+
 augroup Drupal
-  autocmd! BufEnter <buffer> call s:BufEnter()
+  autocmd! BufEnter <buffer> call drupal#BufEnter()
 augroup END
 
-" {{{ @function s:BufEnter()
-" There are some things that we *wish* were local to the buffer.  We stuff
-" them into this function and call them from the autocommand above.
-" - @var $DRUPAL_ROOT
-"   Set this environment variable from b:Drupal_info.DRUPAL_ROOT.
-" - SnipMate settings
-let s:snip_path = expand('<sfile>:p:h:h') . '/snipmate/drupal'
-function! s:BufEnter()
-  if strlen(b:Drupal_info.DRUPAL_ROOT)
-    let $DRUPAL_ROOT = b:Drupal_info.DRUPAL_ROOT
-  endif
-  if exists('*ExtractSnips')
-    call ResetSnippets('drupal')
-    " Load the version-independent snippets.
-    let snip_path = s:snip_path . '/'
-    for ft in split(&ft, '\.')
-      call ExtractSnips(snip_path . ft, 'drupal')
-      call ExtractSnipsFile(snip_path . ft . '.snippets', 'drupal')
-    endfor
-    " If we know the version of Drupal, add the coresponding snippets.
-    if strlen(b:Drupal_info.CORE)
-      let snip_path = s:snip_path . b:Drupal_info.CORE . '/'
-      for ft in split(&ft, '\.')
-	call ExtractSnips(snip_path . ft, 'drupal')
-	call ExtractSnipsFile(snip_path . ft . '.snippets', 'drupal')
-      endfor
-    endif " strlen(b:Drupal_info.CORE)
-  endif " exists('*ExtractSnips')
-endfun
-" }}} s:BufEnter()
-
-if !exists('*s:OpenURL')
-
-function s:OpenURL(base)
-  let open = b:Drupal_info.OPEN_COMMAND
-  if open == ''
-    return
-  endif
-  " Get the word under the cursor.
-  let func = expand('<cword>')
-  " Some API sites let you specify which Drupal version you want.
-  let core = strlen(b:Drupal_info.CORE) ? b:Drupal_info.CORE . '/' : ''
-  " Custom processing for several API sites.
-  if a:base == 'api.d.o'
-    let url = 'http://api.drupal.org/api/search/' . core
-  elseif a:base == 'hook'
-    let url = 'http://api.drupal.org/api/search/' . core
-    " Find the module or theme name and replace it with 'hook'.
-    let root = expand('%:t:r')
-    let func = substitute(func, '^' . root, 'hook', '')
-  elseif a:base == 'drupalcontrib'
-    let url = 'http://drupalcontrib.org/api/search/' . core
-  else
-    let url = a:base
-    execute '!' . open . ' ' . a:base . func
-  endif
-  call system(open . ' ' . url . shellescape(func))
-endfun
-
-endif " !exists('*s:OpenURL')
-
-" Add some menu items.
+" {{{ Menu items
 
 let s:options = {'root': 'Drupal', 'special': '<buffer>'}
-if strlen(b:Drupal_info.OPEN_COMMAND)
+if strlen(b:Drupal_info.OPEN_COMMAND) " {{{
 
   " Lookup the API docs for a drupal function under cursor.
   nmap <Plug>DrupalAPI :silent call <SID>OpenURL('api.d.o')<CR><C-L>
@@ -166,10 +108,49 @@ if strlen(b:Drupal_info.OPEN_COMMAND)
   nmap <Plug>DrushAPI :silent call <SID>OpenURL("http://api.drush.ws/api/function/")<CR><C-L>
   call drupal#CreateMaps('n', 'Drush API', '<LocalLeader>dda',
 	\ '<Plug>DrushAPI', s:options)
-endif
+endif " }}}
 
 " Get the value of the drupal variable under cursor.
 nnoremap <buffer> <LocalLeader>dv :execute "!drush vget ".shellescape(expand("<cword>"), 1)<CR>
   call drupal#CreateMaps('n', 'variable_get', '<LocalLeader>dv',
 	\ ':execute "!drush vget ".shellescape(expand("<cword>"), 1)<CR>',
 	\ s:options)
+
+" Tag commands.
+let s:options = {'root': 'Drupal.Tags', 'shortcut': '<C-]>', 'weight': '100.'}
+let s:descriptions = [
+      \ ['<C-]>', 'Tag under cursor'],
+      \ ['<C-W>]', 'Ditto, split window'],
+      \ [':tag ', 'Go to a tag.'],
+      \ [':stag ', 'Ditto, split window'],
+      \ [':tag /', 'Search for tag.'],
+      \ [':stag /', 'Ditto, split window'],
+      \ [':tag /', 'Search for tag.'],
+      \ [':stag /', 'Ditto, split window'],
+      \ [':ts<CR>', 'Choose one match.'],
+      \ ]
+for [s:key, s:text] in s:descriptions
+  let s:options.shortcut = s:key
+  call drupal#CreateMaps('n', s:text, '', s:key, s:options)
+endfor
+unlet s:options.shortcut
+
+if strlen(drupal#CtagsPath())
+  call drupal#CreateMaps('n', '-Drupal.Tags Sep-', '', ':', s:options)
+  call drupal#CreateMaps('n', 'tag-gen options', '',
+        \ ':Drush help vimrc-tag-gen<CR>', s:options)
+  nmap <Plug>DrupalTagGenProject :call drupal#TagGen('project')<CR>
+  call drupal#CreateMaps('n', 'tag-gen current project', '',
+        \ '<Plug>DrupalTagGenProject', s:options)
+  nmap <Plug>DrupalTagGenRoot :call drupal#TagGen('drupal')<CR>
+  call drupal#CreateMaps('n', 'tag-gen Drupal root', '',
+        \ '<Plug>DrupalTagGenRoot', s:options)
+endif
+
+" Drupal.Configure menu.
+nmap <Plug>DrupalSetRoot :call drupal#SetDrupalRoot()<CR>
+let s:options = {'root': 'Drupal.Configure', 'weight': '900.'}
+call drupal#CreateMaps('n', 'Set Drupal root', '', '<Plug>DrupalSetRoot', s:options)
+call drupal#CreateMaps('n', 'Show Drupal info', '', ':echo b:Drupal_info<CR>', s:options)
+
+" End of menu items. }}}
