@@ -21,14 +21,17 @@ let drupaldetect#php_ext = 'php,module,install,inc,profile,theme,engine,test,vie
 "
 " @return
 "   A string representing the Drupal root, '' if not found.
-let s:drupal_root = ''
+let s:drupal_root_cache = {}
 function drupaldetect#DrupalRoot(path, ...) " {{{
-  " By default, return the cached value.
-  if (a:0 == 0) || (a:1 == 0)
-    return s:drupal_root
+  " If there is a non-zero optional value, then clear the cache.
+  if a:0 && a:1 && has_key(s:drupal_root_cache, a:path)
+    unlet s:drupal_root_cache[a:path]
   endif
-  " Clear the cached value.
-  let s:drupal_root = ''
+  " If we have a cached answer, then return it.
+  if has_key(s:drupal_root_cache, a:path)
+    return s:drupal_root_cache[a:path]
+  endif
+
   " If all the markers are found, assume the directory is the Drupal root.
   " See update_verify_update_archive() for official markers. Define them as
   " lists of path components, then join them with the correct path separator.
@@ -67,11 +70,12 @@ function drupaldetect#DrupalRoot(path, ...) " {{{
       endfor " marker
       " If all the markers are there, then this looks like a Drupal root.
       if is_drupal_root
-        let s:drupal_root = droot
+        let s:drupal_root_cache[a:path] = droot
         return droot
       endif
     endfor " marker_list
   endfor " part
+  let s:drupal_root_cache[a:path] = ''
   return ''
 endfun " }}} }}}
 
@@ -85,14 +89,17 @@ endfun " }}} }}}
 "
 " @return
 "   A string representing the path of the .info file, '' if not found.
-let s:info_path = ''
+let s:info_path_cache = {}
 function drupaldetect#InfoPath(path, ...) " {{{
-  " By default, return the cached value.
-  if (a:0 == 0) || (a:1 == 0)
-    return s:info_path
+  " If there is a non-zero optional value, then clear the cache.
+  if a:0 && a:1 && has_key(s:info_path_cache, a:path)
+    unlet s:info_path_cache[a:path]
   endif
-  " Clear the cached value.
-  let s:info_path = ''
+  " If we have a cached answer, then return it.
+  if has_key(s:info_path_cache, a:path)
+    return s:info_path_cache[a:path]
+  endif
+
   let dir = a:path
   let tail = strridx(dir, s:slash)
   while tail != -1
@@ -102,17 +109,18 @@ function drupaldetect#InfoPath(path, ...) " {{{
       let files = split(infopath, '\n')
       for file in files
 	if file =~ '\.info$'
-          let s:info_path = file
+          let s:info_path_cache[a:path] = file
 	  return file
 	endif
       endfor
-      let s:info_path = list[0]
+      let s:info_path_cache[a:path] = list[0]
       return list[0]
     endif
     " No luck yet, so go up one directory.
     let dir = strpart(dir, 0, tail)
     let tail = strridx(dir, s:slash)
   endwhile
+  let s:info_path_cache[a:path] = ''
   return ''
 endfun " }}} }}}
 
@@ -127,16 +135,24 @@ endfun " }}} }}}
 " @return
 "   A numeric string representing the Drupal core version.
 " {{{
-let s:core_version = ''
+let s:core_version_cache = {}
 function drupaldetect#CoreVersion(info_path, ...)
-  " By default, return the cached value.
-  if (a:0 == 0) || (a:1 == 0)
-    return s:core_version
+  " Bail out if the path is empty.
+  if a:info_path == ''
+    return ''
   endif
-  " Clear the cached value.
-  let s:core_version = ''
+  " If there is a non-zero optional value, then clear the cache.
+  if a:0 && a:1 && has_key(s:core_version_cache, a:info_path)
+    unlet s:core_version_cache[a:info_path]
+  endif
+  " If we have a cached answer, then return it.
+  if has_key(s:core_version_cache, a:info_path)
+    return s:core_version_cache[a:info_path]
+  endif
+
   " Find the Drupal core version.
   if !filereadable(a:info_path)
+    let s:core_version_cache[a:info_path] = ''
     return ''
   endif
   let lines = readfile(a:info_path, '', 500)
@@ -144,6 +160,6 @@ function drupaldetect#CoreVersion(info_path, ...)
   " Find the first line that matches.
   let core_line = matchstr(lines, core_re)
   " Return the part of the line that matches, '' if no match.
-  let s:core_version = matchstr(core_line, core_re)
-  return s:core_version
+  let s:core_version_cache[a:info_path] = matchstr(core_line, core_re)
+  return s:core_version_cache[a:info_path]
 endfun " }}} }}}

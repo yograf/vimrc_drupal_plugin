@@ -17,9 +17,9 @@ augroup END
 function! s:DrupalDetect(type) " {{{
   " Expect something like /var/www/drupal-7.9/sites/all/modules/ctools
   let directory = expand('%:p:h')
-  let drupal_root = drupaldetect#DrupalRoot(directory, 1)
-  let info_path = drupaldetect#InfoPath(directory, 1)
-  let core = drupaldetect#CoreVersion(info_path, 1)
+  let drupal_root = drupaldetect#DrupalRoot(directory)
+  let info_path = drupaldetect#InfoPath(directory)
+  let core = drupaldetect#CoreVersion(info_path)
   if strlen(drupal_root) || strlen(core)
     execute 'setf ' . a:type . '.drupal'
   endif
