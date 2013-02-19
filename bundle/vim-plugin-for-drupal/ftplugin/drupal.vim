@@ -90,22 +90,22 @@ let s:options = {'root': 'Drupal', 'special': '<buffer>'}
 if strlen(b:Drupal_info.OPEN_COMMAND) " {{{
 
   " Lookup the API docs for a drupal function under cursor.
-  nmap <Plug>DrupalAPI :silent call <SID>OpenURL('api.d.o')<CR><C-L>
+  nmap <Plug>DrupalAPI :silent call drupal#OpenURL('api.d.o')<CR><C-L>
   call drupal#CreateMaps('n', 'Drupal API', '<LocalLeader>da',
 	\ '<Plug>DrupalAPI', s:options)
 
   " Lookup the API docs for a drupal hook under cursor.
-  nmap <Plug>DrupalHook :silent call <SID>OpenURL('hook')<CR><C-L>
+  nmap <Plug>DrupalHook :silent call drupal#OpenURL('hook')<CR><C-L>
   call drupal#CreateMaps('n', 'Drupal Hook', '<LocalLeader>dh',
 	\ '<Plug>DrupalHook', s:options)
 
   " Lookup the API docs for a contrib function under cursor.
-  nmap <Plug>DrupalContribAPI :silent call <SID>OpenURL('drupalcontrib')<CR><C-L>
+  nmap <Plug>DrupalContribAPI :silent call drupal#OpenURL('drupalcontrib')<CR><C-L>
   call drupal#CreateMaps('n', 'Drupal contrib', '<LocalLeader>dc',
 	\ '<Plug>DrupalContribAPI', s:options)
 
   " Lookup the API docs for a drush function under cursor.
-  nmap <Plug>DrushAPI :silent call <SID>OpenURL("http://api.drush.ws/api/function/")<CR><C-L>
+  nmap <Plug>DrushAPI :silent call drupal#OpenURL("http://api.drush.ws/api/function/")<CR><C-L>
   call drupal#CreateMaps('n', 'Drush API', '<LocalLeader>dda',
 	\ '<Plug>DrushAPI', s:options)
 endif " }}}
