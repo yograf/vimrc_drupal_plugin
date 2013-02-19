@@ -113,8 +113,8 @@ function drupaldetect#InfoPath(path, ...) " {{{
 	  return file
 	endif
       endfor
-      let s:info_path_cache[a:path] = list[0]
-      return list[0]
+      let s:info_path_cache[a:path] = files[0]
+      return files[0]
     endif
     " No luck yet, so go up one directory.
     let dir = strpart(dir, 0, tail)
