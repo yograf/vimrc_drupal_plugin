@@ -1,6 +1,10 @@
 " We never :set ft=drupal.  This filetype is always added to another, as in
 " :set ft=php.drupal or :set ft=css.drupal.
 
+" Just in case someone is still using Vim in 'compatible' mode.
+let s:keepcpo= &cpo
+set cpo&vim
+
 " @var b:Drupal_info
 " drupal#DrupalInfo() will return a Dictionary containing useful information.
 let b:Drupal_info = drupal#DrupalInfo()
@@ -33,6 +37,10 @@ for tagfile in tags
   endif
 endfor
 
+" Maybe someday 'tags' will be made |global-local|. Until then, including this
+" is a no-op.
+let s:undo_ftplugin = 'setlocal tags<'
+
 " {{{ PHP specific settings.
 " In ftdetect/drupal.vim we set ft=php.drupal.  This means that the settings
 " here will come after those set by the PHP ftplugins.  In particular, we can
@@ -53,15 +61,11 @@ if &ft =~ '\<php\>'
   if exists('loaded_syntastic_plugin') && executable('phpcs')
     let g:syntastic_phpcs_conf = ' --standard=Drupal ' . drupaldetect#php_ext
   endif
+
+  " Cf. comment on 'tags':  'ignorecase' is global.
+  let s:undo_ftplugin .= ' ignorecase< comments<'
 endif
 " }}} PHP specific settings.
-
-" The usual variable, b:did_ftplugin, is already set by the ftplugin for the
-" primary filetype, so use a custom variable. The Syntastic and tags setting
-" above are global, so check them each time we enter the buffer in case they
-" have been changed.  Everything below is buffer-local.
-if exists("b:did_drupal_ftplugin")  && exists("b:did_ftplugin") | finish | endif
-let b:did_drupal_ftplugin = 1
 
 setl autoindent              "Auto indent based on previous line
 setl expandtab               "Tab key inserts spaces
@@ -79,6 +83,27 @@ setl textwidth=80            "Limit comment lines to 80 characters.
 "  +l:  Do not break a comment line if it is long before you start.
 setl formatoptions-=t
 setl formatoptions+=croql
+
+" Cf. comment on 'tags':  'joinspaces' and 'smarttab' are global.
+let s:undo_ftplugin .= ' autoindent< expandtab< joinspaces< shiftwidth<
+      \ smartindent< smarttab< tabstop< textwidth<'
+
+" Done setting options, and the next line may finish the script.
+if exists("b:undo_ftplugin")
+  let b:undo_ftplugin = s:undo_ftplugin . ' | ' . b:undo_ftplugin
+else
+  let b:undo_ftplugin = s:undo_ftplugin
+endif
+
+" Some options will be set by other ftplugin files, and some will be reset to
+" their global values when ftplugin.vim executes b:undo_ftplugin, so do not
+" :finish before setting all options as above. The commands below do not have
+" to be repeated when re-entering a buffer.
+"
+" The usual variable, b:did_ftplugin, is already set by the ftplugin for the
+" primary filetype, so use a custom variable.
+if exists("b:did_drupal_ftplugin")  && exists("b:did_ftplugin") | let &cpo = s:keepcpo | finish | endif
+let b:did_drupal_ftplugin = 1
 
 augroup Drupal
   autocmd! BufEnter <buffer> call drupal#BufEnter()
@@ -154,3 +179,6 @@ call drupal#CreateMaps('n', 'Set Drupal root', '', '<Plug>DrupalSetRoot', s:opti
 call drupal#CreateMaps('n', 'Show Drupal info', '', ':echo b:Drupal_info<CR>', s:options)
 
 " End of menu items. }}}
+
+" Restore the saved compatibility options.
+let &cpo = s:keepcpo
