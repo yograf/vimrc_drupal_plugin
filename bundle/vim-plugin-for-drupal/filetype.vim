@@ -10,7 +10,7 @@ augroup filetypedetect
   autocmd BufRead,BufNewFile *.sass call s:DrupalDetect('sass')
   autocmd BufRead,BufNewFile *.scss call s:DrupalDetect('scss')
   autocmd BufRead,BufNewFile *.js call s:DrupalDetect('javascript')
-  autocmd BufRead,BufNewFile *.{info,make,build} call s:DrupalDetect('drini')
+  autocmd BufRead,BufNewFile *.{info,info.yml,make,build} call s:DrupalDetect('drini')
 augroup END
 
 " @function! s:DrupalDetect(type) " {{{

@@ -239,7 +239,8 @@ endif
 endfun " }}} }}}
 
 " @function drupal#IniType(info_path) {{{
-" Find the type (module, theme, make) by parsing the path.
+" Find the type (module, theme, make) by parsing the path. For D8, first try
+" parsing the .info.yml file.
 "
 " @param info_path
 "   A string representing the path to the .info file.
@@ -249,30 +250,37 @@ endfun " }}} }}}
 "
 " @todo:  How do we recognize a Profiler .info file?
 function! drupal#IniType(info_path) " {{{
+  " Determine make files by their extensions. Parse .yml files.
   let ext = fnamemodify(a:info_path, ':e')
   if ext == 'make' || ext == 'build'
     return 'make'
-  else
-    " Borrowed from autoload/pathogen.vim:
-    let slash = !exists("+shellslash") || &shellslash ? '/' : '\'
-    " If the extension is not 'info' at this point, I do not know how we got
-    " here.
-    let m_index = strridx(a:info_path, slash . 'modules' . slash)
-    let t_index = strridx(a:info_path, slash . 'themes' . slash)
-    " If neither matches, try a case-insensitive search.
-    if m_index == -1 && t_index == -1
-      let m_index = matchend(a:info_path, '\c.*\' . slash . 'modules\' . slash)
-      let t_index = matchend(a:info_path, '\c.*\' . slash . 'themes\' . slash)
+  elseif ext == 'yml'
+    let type = drupaldetect#ParseInfo(a:info_path, 'type', 'yml')
+    if strlen(type)
+      return type
     endif
-    if m_index > t_index
-      return 'module'
-    elseif m_index < t_index
-      return 'theme'
-    endif
-    " We are not inside a themes/ directory, nor a modules/ directory.  Do not
-    " guess.
-    return ''
   endif
+
+  " If we are not done yet, then parse the path.
+  " Borrowed from autoload/pathogen.vim:
+  let slash = !exists("+shellslash") || &shellslash ? '/' : '\'
+  " If the extension is not 'info' at this point, I do not know how we got
+  " here.
+  let m_index = strridx(a:info_path, slash . 'modules' . slash)
+  let t_index = strridx(a:info_path, slash . 'themes' . slash)
+  " If neither matches, try a case-insensitive search.
+  if m_index == -1 && t_index == -1
+    let m_index = matchend(a:info_path, '\c.*\' . slash . 'modules\' . slash)
+    let t_index = matchend(a:info_path, '\c.*\' . slash . 'themes\' . slash)
+  endif
+  if m_index > t_index
+    return 'module'
+  elseif m_index < t_index
+    return 'theme'
+  endif
+  " We are not inside a themes/ directory, nor a modules/ directory.  Do not
+  " guess.
+  return ''
 endfun " }}} }}}
 
 " @function! drupal#SetDrupalRoot() " {{{

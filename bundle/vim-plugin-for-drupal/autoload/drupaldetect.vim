@@ -81,6 +81,7 @@ endfun " }}} }}}
 
 " @function drupaldetect#InfoPath(, ...) {{{
 " Try to find the .info file of the module, theme, etc. containing a path.
+" Update for D8: look for the extension .info.yml.
 "
 " @param path
 "   A string representing a system path.
@@ -103,12 +104,12 @@ function drupaldetect#InfoPath(path, ...) " {{{
   let dir = a:path
   let tail = strridx(dir, s:slash)
   while tail != -1
-    let infopath = glob(dir . s:slash . '*.{info,make,build}')
+    let infopath = glob(dir . s:slash . '*.{info,info.yml,make,build}')
     if strlen(infopath)
       " If there is more than one, they are separated by newlines.
       let files = split(infopath, '\n')
       for file in files
-	if file =~ '\.info$'
+	if file =~ '\.info$' || file =~ '\.info.yml$'
           let s:info_path_cache[a:path] = file
 	  return file
 	endif
@@ -128,7 +129,7 @@ endfun " }}} }}}
 " Find the version of Drupal core by parsing the .info file.
 "
 " @param info_path
-"   A string representing the path to the .info file.
+"   A string representing the path to the .info or .info.yml file.
 " @param ... (optional)
 "   If present and non-zero, then clear the cached value.
 "
@@ -150,16 +151,34 @@ function drupaldetect#CoreVersion(info_path, ...)
     return s:core_version_cache[a:info_path]
   endif
 
-  " Find the Drupal core version.
+  " Find the Drupal core version. Strip '.x' from the end.
+  let ext = fnamemodify(a:info_path, ':e')
+  let core = drupaldetect#ParseInfo(a:info_path, 'core', ext)
+  let s:core_version_cache[a:info_path] = matchstr(core, '^\d\+\ze\.x\s*')
+  return s:core_version_cache[a:info_path]
+endfun " }}} }}}
+
+" @function drupaldetect#ParseInfo(info_path, key, type) {{{
+" Find the value corresponding to a key in an info file.
+"
+" @param info_path
+"   A string representing the path to the .info or .info.yml file.
+" @param key
+"   A string key
+" @param type
+"   Either 'info' (pre-D8) or 'yml' (D8 and above).
+"
+" @return
+"   String: the corresponding value, or '' if not found.
+function! drupaldetect#ParseInfo(info_path, key, type) " {{{
   if !filereadable(a:info_path)
-    let s:core_version_cache[a:info_path] = ''
     return ''
   endif
   let lines = readfile(a:info_path, '', 500)
-  let core_re = '^\s*core\s*=\s*\zs\d\+\ze\.x\s*$'
+  let marker = (a:type == 'yml') ? ':' : '='
+  let regexp = '^\s*' . escape(a:key, '\') . '\s*' . marker . '\s*\zs.*'
   " Find the first line that matches.
-  let core_line = matchstr(lines, core_re)
+  let core_line = matchstr(lines, regexp)
   " Return the part of the line that matches, '' if no match.
-  let s:core_version_cache[a:info_path] = matchstr(core_line, core_re)
-  return s:core_version_cache[a:info_path]
+  return matchstr(core_line, regexp)
 endfun " }}} }}}
