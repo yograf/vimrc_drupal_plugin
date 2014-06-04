@@ -41,12 +41,13 @@ function vimrc_drush_command() {
       'include-js' => 'Include tags for .js files (defaults to "no")',
       'include-test' => 'Include tags for .test files (defaults to "no")',
       'make-portable' => 'Replace path with \'$DRUPAL_ROOT\' (defaults to "no")',
+      'ctags-options' => 'Extra options to pass to ctags (defaults to "")',
     ),
     'examples' => array(
       'drush vimrc-tag-gen $HOME/Sites/drupal-7 --tag-file=drupal7.tags'
       => 'Generate a tags file for your distribution of Drupal 7 and save it as drupal7.tags in the current directory.',
-      'drush tags sites/all/modules/ctools --ctags=/usr/local/bin/ctags'
-      => 'Generate a tags file for the ctools module using a specific ctags executable and save it as tags in the current directory.',
+      "drush tags sites/all/modules/ctools --ctags=/usr/local/bin/ctags --ctags-options='--fields=+aimS'"
+      => 'Generate a tags file for the ctools module using a specific ctags executable and options and save it as tags in the current directory.',
     ),
     'aliases' => array('tags'),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
@@ -507,7 +508,8 @@ function drush_vimrc_tag_gen($path = '.') {
   if ($include_js != 'yes') {
     $langmap .= ',javascript:';
   }
-  $options = "-R --totals --extra=+f --langmap=$langmap --php-kinds=-v";
+  $options = drush_get_option('ctags-options', '');
+  $options .= " -R --totals --extra=+f --langmap=$langmap --php-kinds=-v";
   $options .= ' --exclude=' . implode(' --exclude=', $excludes);
 
   // Run ctags, generating $tag_file.
