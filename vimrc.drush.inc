@@ -135,15 +135,31 @@ function _vimrc_vimrc_default() {
 
 /**
  * Check whether the pathogen plugin is installed.
+ *
+ * @return mixed
+ * - FALSE if not installed
+ * - version string if it can be determined, such as '2.0'
+ * - TRUE if installed but cannot determine version string
  */
 function _vimrc_check_pathogen($vim) {
-  $lines = vimrc_vim_command($vim, '2verbose runtime autoload/pathogen.vim');
+  $lines = vimrc_vim_command($vim, '2verbose runtime autoload/pathogen.vim', TRUE);
   if ($lines === FALSE) {
     return drush_set_error('DRUSH_APPLICATION_ERROR',
       dt('Error when calling vim to check for pathogen.'));
   }
-  $message = implode("\n", $lines);
-  return preg_match('#^finished sourcing .*autoload/pathogen.vim$#m', $message);
+  if (preg_match('#^finished sourcing .*autoload/pathogen.vim$#m', $lines)) {
+    $commands = array(
+      'runtime autoload/pathogen.vim',
+      'Vedit autoload/pathogen.vim',
+      '0/^" Version',
+      '2verbose echo matchstr(getline("."), ' . "'Version.* \zs[0-9.]*$')",
+    );
+    $version_string = array_pop(vimrc_vim_commands($vim, $commands));
+    return $version_string ? $version_string : TRUE;
+  }
+  else {
+    return FALSE;
+  }
 }
 
 /**
@@ -239,13 +255,35 @@ function drush_vimrc_install($path = '.') {
   $vimrclines = array(
     '" Following lines added by drush vimrc-install on ' . date('r') . '.',
     'set nocompatible',
-    "call pathogen#infect('$vimrcbundle')",
-    "call pathogen#infect('$bundle')",
-    '" End of vimrc-install additions.',
-    '',
   );
+
+  // The current version of pathogen requires a trailing '/{}' on the directory,
+  // but this silently breaks older versions. It is better to get a noisy error
+  // message than to fail silently, so use the older syntax if there is any
+  // doubt.
+  $pathogen_version = _vimrc_check_pathogen($vim);
+  if (is_string($pathogen_version) && preg_match('/(\d+)\.(\d+)/', $pathogen_version, $matches) && (10 * $matches[1] + $matches[2] > 22)) {
+    array_push($vimrclines,
+      "call pathogen#infect('$vimrcbundle/{}')",
+      "call pathogen#infect('$bundle/{}')"
+    );
+  }
+  else {
+    array_push($vimrclines,
+      "call pathogen#infect('$vimrcbundle')",
+      "call pathogen#infect('$bundle')"
+    );
+  }
+
+  $ft_check = vimrc_vim_commands($vim, array("source $vimrc", 'filetype'), TRUE);
+  if (strpos($ft_check, 'detection:ON') === FALSE || strpos($ft_check, 'plugin:ON') === FALSE) {
+    $vimrclines[] = 'filetype plugin on';
+  }
+
+  array_push($vimrclines, '" End of vimrc-install additions.', '');
+
   $runcommands = file_get_contents($vimrc);
-  if (strpos($runcommands, "call pathogen#infect('$vimrcbundle')") === FALSE) {
+  if (strpos($runcommands, "call pathogen#infect('$vimrcbundle") === FALSE) {
     if (empty($runcommands)) {
       $runcommands = file_get_contents("$DIR/examples/vimrc_standard.vim");
     }
