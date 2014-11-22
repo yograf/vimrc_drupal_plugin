@@ -137,20 +137,65 @@ function drupal#OpenURL(base) " {{{
   call system(open . ' ' . url . shellescape(func))
 endfun " }}} }}}
 
+" function! s:FindPath(dirs, subpath, condition) " {{{
+" Utility function:  find a path satisfying a condition
+" @param
+"   List dirs: each entry is a String representing a directory, ending in '/'
+"   String subpath: a subpath to look for inside each directory
+"   String condition: a condition to be evaluated on path = directory . subpath
+" @return String
+"   The path satisfying the condition, '' if none is found.
+function! s:FindPath(dirs, subpath, condition) " {{{
+  for dir in a:dirs
+    let path = dir . a:subpath
+    execute 'let success =' a:condition
+    if success
+      return path
+    endif
+  endfor
+  return ''
+endfun  " }}} }}}
+
 " @function! drupal#CtagsPath() " {{{
 " Return path to exuberant ctags, or '' if not found.
 function! drupal#CtagsPath() " {{{
   let dirs = ['', '/usr/bin/', '/usr/local/bin/']
-  for dir in dirs
-    if executable(dir . 'ctags')
-      if system(dir . 'ctags --version') =~ 'Exuberant Ctags'
-        return dir . 'ctags'
-      endif
-    endif
-  endfor
-  return ''
+  let condition = 'executable(path) && system(path --version) =~ "Exuberant Ctags"'
+  return s:FindPath(dirs, 'ctags', condition)
 endfun
 " }}} }}}
+
+" @function! drupal#PhpcsPath() " {{{
+" Return path to phpcs (PHP CodeSniffer), or '' if not found.
+function! drupal#PhpcsPath() " {{{
+  let dirs = ['', $HOME . '/.composer/vendor/bin/', '/usr/local/bin/']
+  return s:FindPath(dirs, 'phpcs', 'executable(path)')
+endfun
+" }}} }}}
+let drupal#phpcs_exec = drupal#PhpcsPath()
+
+" @function! drupal#CodeSnifferPath() " {{{
+" Return path to Drupal standards for PHP CodeSniffer, or '' if not found.
+function! drupal#CodeSnifferPath() " {{{
+  let dirs = [$HOME . '/.composer/vendor/drupal/', $HOME . '/.drush/']
+  return s:FindPath(dirs, 'coder/coder_sniffer/Drupal', 'isdirectory(path)')
+endfun
+" }}} }}}
+let drupal#codesniffer_standard = drupal#CodeSnifferPath()
+
+" @function! drupal#PhpcsArgs() " {{{
+" Return the arguments that should be added to phpcs.
+function! drupal#PhpcsArgs() " {{{
+  let args = {
+	\ 'standard': g:drupal#codesniffer_standard,
+	\ 'report': 'csv',
+	\ 'extensions': g:drupaldetect#php_ext
+	\ }
+  call filter(args, 'strlen(v:val)')
+  return join(map(items(args), '"--" . v:val[0] . "=" . v:val[1]'))
+endfun
+" }}} }}}
+let drupal#phpcs_args = drupal#PhpcsArgs()
 
 " @function! drupal#TagGen(type)" {{{
 " Invoke ctags via drush, either for the current project or for the Drupal
