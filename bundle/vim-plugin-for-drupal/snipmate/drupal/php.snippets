@@ -54,6 +54,14 @@ snippet textfield
 	  '#size' => ${3:/* default:60 */},
 	);
 
+snippet text_format
+	$form['${1:/* form element */}'] = array(
+	  '#type' => 'text_format',
+	  '#title' => t('${2:/* title */}'),
+	  '#size' => ${3:/* default:60 */},
+	  '#format' => ${4:NULL},
+	);
+
 ## drupal_ functions
 
 snippet drupal_get_form
