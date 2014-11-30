@@ -92,6 +92,20 @@ snippet hook_comment
 	  }
 	}
 
+snippet hook_node_info
+	/**
+	 * Implements hook_node_info().
+	 */
+	function `Filename()`_node_info() {
+	  return array(
+	    '${1:/* machine-readable name */}' => array(
+	      'name' => t('${2:/* human-readable name */}'),
+	      'module' => '`Filename()`',
+	      'description' => t('${3:/* description */}'),
+	    ),
+	  );
+	}
+
 snippet hook_node_type
 	/**
 	 * Implements hook_node_type().
