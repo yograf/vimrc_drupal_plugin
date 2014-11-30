@@ -62,16 +62,15 @@ function vimrc_drush_command() {
 function drush_vimrc_install_validate() {
   // Bail out if vim is not executable or is not the right version.
   $vim = drush_get_option('vim-command', 'vim');
-  $vim = escapeshellcmd($vim);
-  drush_set_option('vim-command', $vim);
   $error = '';
   // This works only if $vim is a full path.
   // if (!is_executable($vim)) {
   //   $error = dt('The command %vim is not executable.', array('%vim' => $vim));
   // }
   // else {
-  exec("$vim --version", $output, $retval);
-  if ($retval) {
+  $success = drush_shell_exec('%s --version', $vim);
+  $output = drush_shell_exec_output();
+  if (!$success) {
     $error = dt('The command %vim exited with an error.',
       array('%vim' => $vim));
   }
@@ -183,8 +182,7 @@ function _vimrc_check_pathogen($vim) {
 function vimrc_vim_command($vim, $command, $implode = FALSE) {
   $infile = drush_save_data_to_temp_file("$command\nqa!\n");
   $vimlog = drush_tempnam('vimrc');
-  exec("$vim -e -s -N -V0$vimlog -S $infile", $output, $retval);
-  if ($retval > 1) {
+  if (!drush_shell_exec('%s -e -s -N -V0%s -S %s', $vim, $vimlog, $infile)) {
     return FALSE;
   }
   $lines = file($vimlog);
@@ -494,8 +492,9 @@ function drush_vimrc_tag_gen_validate() {
   $ctags = drush_get_option('ctags', 'ctags');
   $ctags = escapeshellcmd($ctags);
   drush_set_option('ctags', $ctags);
-  exec("$ctags --version", $output, $retval);
-  if ($retval || !preg_match('/^Exuberant Ctags/', $output[0])) {
+  $success = drush_shell_exec('%s --version', $ctags);
+  $output = drush_shell_exec_output();
+  if (!$success || !preg_match('/^Exuberant Ctags/', $output[0])) {
     return drush_set_error('DRUSH_APPLICATION_ERROR', dt('Make sure that Exuberant Ctags is installed (http://ctags.sourceforge.net/) and specify the path with (for example) --ctags=/usr/local/bin/ctags'));
   }
   // Check that the tags file is writable.
@@ -551,8 +550,10 @@ function drush_vimrc_tag_gen($path = '.') {
   $options .= ' --exclude=' . implode(' --exclude=', $excludes);
 
   // Run ctags, generating $tag_file.
-  print dt('Some warning messages from ctags are normal.') . "\n\n";
-  exec("$ctags -f $tag_file $options $path");
+  drush_log(dt('Some warning messages from ctags are normal.'));
+  // Do not pass $options as an argument to drush_shell_exec() because then it
+  // will get wrapped in single quotes by drush_escapeshellarg().
+  drush_shell_exec("%s -f %s $options %s", $ctags, $tag_file, $path);
 
   // Skip lines matching these patterns.
   $patterns = array();
