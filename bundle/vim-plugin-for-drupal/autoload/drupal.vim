@@ -86,11 +86,17 @@ endfunction " }}} }}}
 " - @var $DRUPAL_ROOT
 "   Set this environment variable from b:Drupal_info.DRUPAL_ROOT.
 " - SnipMate settings
-let s:snip_path = expand('<sfile>:p:h:h') . '/snipmate/drupal'
+let s:snip_path = expand('<sfile>:p:h:h') . '/snippets/drupal'
 function! drupal#BufEnter() " {{{
   if strlen(b:Drupal_info.DRUPAL_ROOT)
     let $DRUPAL_ROOT = b:Drupal_info.DRUPAL_ROOT
   endif
+  " Garbas' snipmate is already aware of version-indepedent snippets
+  " so we load the scope for the version-dependent snippets.
+  if strlen(b:Drupal_info.CORE) && exists(':SnipMateLoadScope')
+    exec 'SnipMateLoadScope drupal' . b:Drupal_info.CORE
+  endif
+  " Load snippets for the snipmate version on vimscripts.
   if exists('*ExtractSnips')
     call ResetSnippets('drupal')
     " Load the version-independent snippets.
@@ -103,8 +109,8 @@ function! drupal#BufEnter() " {{{
     if strlen(b:Drupal_info.CORE)
       let snip_path = s:snip_path . b:Drupal_info.CORE . '/'
       for ft in split(&ft, '\.')
-	call ExtractSnips(snip_path . ft, 'drupal')
-	call ExtractSnipsFile(snip_path . ft . '.snippets', 'drupal')
+        call ExtractSnips(snip_path . ft, 'drupal')
+        call ExtractSnipsFile(snip_path . ft . '.snippets', 'drupal')
       endfor
     endif " strlen(b:Drupal_info.CORE)
   endif " exists('*ExtractSnips')
