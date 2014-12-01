@@ -254,11 +254,13 @@ function! drupal#DrupalInfo() " {{{
   if info.CORE == '' && info.DRUPAL_ROOT != ''
     let INFO_FILE = info.DRUPAL_ROOT . '/modules/system/system.info'
     if filereadable(INFO_FILE)
+      " Looks like we are dealing with Drupal 6/7.
       let info.CORE = drupaldetect#CoreVersion(INFO_FILE)
     else
-      let INFO_FILE = info.DRUPAL_ROOT . '/core/modules/system/system.info'
+      let INFO_FILE = info.DRUPAL_ROOT . '/core/modules/system/system.info.yml'
       if filereadable(INFO_FILE)
-	let info.CORE = drupaldetect#CoreVersion(INFO_FILE)
+        " Looks like we are dealing with Drupal 8.
+        let info.CORE = drupaldetect#CoreVersion(INFO_FILE)
       endif
     endif
   elseif info.DRUPAL_ROOT == '' && info.CORE != ''  && exists('g:Drupal_dirs')
