@@ -13,6 +13,23 @@ augroup Drupal
   autocmd BufWinLeave * call s:ToggleWhitespaceMatch('BufWinLeave')
   autocmd InsertEnter * call s:ToggleWhitespaceMatch('InsertEnter')
   autocmd InsertLeave * call s:ToggleWhitespaceMatch('InsertLeave')
+  " Use :noautocmd because setting 'syntax' triggers a reload of all syntax
+  " files. Then source all ftplugin and syntax files for Drupal.
+  " For PHP files, we already called drupaldetect#Check() from the
+  " autocommands in filetype.vim. It may seem wasteful to call it again, but
+  " separating the initial filetype detection from adding '.drupal' seems like
+  " a more maintainable approach. Other scripts, notably twig-related ones,
+  " may also be manipulating the 'filetype' and 'syntax' options.
+  autocmd FileType *
+        \ if drupaldetect#Check() && &ft !~ '\<drupal\>' |
+          \ noautocmd let &ft .= '.drupal' |
+          \ runtime! ftplugin/drupal.vim |
+        \ endif
+  autocmd Syntax *
+        \ if drupaldetect#Check() && &syntax !~ '\<drupal\>' |
+          \ noautocmd let &syntax .= '.drupal' |
+          \ runtime! syntax/drupal.vim |
+        \ endif
 augroup END
 highlight default link drupalExtraWhitespace Error
 
