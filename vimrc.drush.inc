@@ -395,6 +395,12 @@ function vimrc_download_plugins($vim, $vimrc, $bundle, $update = FALSE, $plugins
       'tarball' => 'https://github.com/majutsushi/tagbar/archive/master.zip',
       'git uri' => 'https://github.com/majutsushi/tagbar.git',
     );
+    $plugins['twig'] = array(
+      'name' => 'Twig',
+      'description' => 'Vim plugin that adds syntax highlighting, snippets, and settings for twig files.',
+      'tarball' => 'https://github.com/evidens/vim-twig/archive/master.zip',
+      'git uri' => 'https://github.com/evidens/vim-twig.git',
+    );
   }
 
   // Find out which plugins are installed.
