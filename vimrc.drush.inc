@@ -552,6 +552,11 @@ function drush_vimrc_tag_gen($path = '.') {
     $langmap .= ',javascript:';
   }
   $options = drush_get_option('ctags-options', '');
+  // Add a "file" language: ctags will add a file tag for each specified
+  // extension. See
+  // http://knplabs.com/blog/2011/11/30/boost-your-productivity-with-sf2-and-vim/
+  $options .= " --langdef=file";
+  $langmap .= ",file:+.twig.yml";
   $options .= " -R --totals --extra=+f --langmap=$langmap --php-kinds=-v";
   $options .= ' --exclude=' . implode(' --exclude=', $excludes);
 
