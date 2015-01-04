@@ -401,6 +401,12 @@ function vimrc_download_plugins($vim, $vimrc, $bundle, $update = FALSE, $plugins
       'tarball' => 'https://github.com/evidens/vim-twig/archive/master.zip',
       'git uri' => 'https://github.com/evidens/vim-twig.git',
     );
+    $plugins['vdebug'] = array(
+      'name' => 'Vdebug',
+      'description' => 'Vim plugin that provides an interface for Xdebug.',
+      'tarball' => 'https://github.com/joonty/vdebug/archive/master.zip',
+      'git uri' => 'https://github.com/joonty/vdebug.git',
+    );
   }
 
   // Find out which plugins are installed.
