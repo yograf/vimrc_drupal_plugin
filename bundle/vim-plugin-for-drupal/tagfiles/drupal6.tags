@@ -58,59 +58,59 @@ DRUPAL_MINIMUM_MYSQL	$DRUPAL_ROOT/modules/system/system.module	/^define('DRUPAL_
 DRUPAL_MINIMUM_PGSQL	$DRUPAL_ROOT/modules/system/system.module	/^define('DRUPAL_MINIMUM_PGSQL',  '7.4');$/;"	d
 DRUPAL_MINIMUM_PHP	$DRUPAL_ROOT/modules/system/system.module	/^define('DRUPAL_MINIMUM_PHP',    '4.3.5');$/;"	d
 DRUPAL_MINIMUM_PHP_MEMORY_LIMIT	$DRUPAL_ROOT/modules/system/system.module	/^define('DRUPAL_MINIMUM_PHP_MEMORY_LIMIT',    '16M');$/;"	d
-Drupal.ACDB	$DRUPAL_ROOT/misc/autocomplete.js	/^};$/;"	c
+Drupal.ACDB	$DRUPAL_ROOT/misc/autocomplete.js	/^Drupal.ACDB = function (uri) {$/;"	c
 Drupal.ACDB.cancel	$DRUPAL_ROOT/misc/autocomplete.js	/^Drupal.ACDB.prototype.cancel = function() {$/;"	m
 Drupal.ACDB.search	$DRUPAL_ROOT/misc/autocomplete.js	/^Drupal.ACDB.prototype.search = function (searchString) {$/;"	m
-Drupal.ahah	$DRUPAL_ROOT/misc/ahah.js	/^};$/;"	c
+Drupal.ahah	$DRUPAL_ROOT/misc/ahah.js	/^Drupal.ahah = function(base, element_settings) {$/;"	c
 Drupal.ahah.beforeSend	$DRUPAL_ROOT/misc/ahah.js	/^Drupal.ahah.prototype.beforeSend = function (request, options) {$/;"	m
 Drupal.ahah.beforeSubmit	$DRUPAL_ROOT/misc/ahah.js	/^Drupal.ahah.prototype.beforeSubmit = function (form_values, element, options) {$/;"	m
 Drupal.ahah.complete	$DRUPAL_ROOT/misc/ahah.js	/^Drupal.ahah.prototype.complete = function (response, status) {$/;"	m
 Drupal.ahah.error	$DRUPAL_ROOT/misc/ahah.js	/^Drupal.ahah.prototype.error = function (response, uri) {$/;"	m
-Drupal.ahah.options.url	$DRUPAL_ROOT/misc/ahah.js	/^  var options = {$/;"	p
+Drupal.ahah.options.url	$DRUPAL_ROOT/misc/ahah.js	/^    url: ahah.url,$/;"	p
 Drupal.ahah.success	$DRUPAL_ROOT/misc/ahah.js	/^Drupal.ahah.prototype.success = function (response, status) {$/;"	m
-Drupal.attachBehaviors	$DRUPAL_ROOT/misc/drupal.js	/^Drupal.jsEnabled = document.getElementsByTagName && document.createElement && document.createTextNode && document.documentElement && document.getElementById;$/;"	f
-Drupal.autocompleteSubmit	$DRUPAL_ROOT/misc/autocomplete.js	/^};$/;"	f
-Drupal.behaviors.ahah	$DRUPAL_ROOT/misc/ahah.js	/^$/;"	f
-Drupal.behaviors.autocomplete	$DRUPAL_ROOT/misc/autocomplete.js	/^$/;"	f
-Drupal.behaviors.batch	$DRUPAL_ROOT/misc/batch.js	/^$/;"	f
-Drupal.behaviors.blockDrag	$DRUPAL_ROOT/modules/block/block.js	/^$/;"	f
+Drupal.attachBehaviors	$DRUPAL_ROOT/misc/drupal.js	/^Drupal.attachBehaviors = function(context) {$/;"	f
+Drupal.autocompleteSubmit	$DRUPAL_ROOT/misc/autocomplete.js	/^Drupal.autocompleteSubmit = function () {$/;"	f
+Drupal.behaviors.ahah	$DRUPAL_ROOT/misc/ahah.js	/^Drupal.behaviors.ahah = function(context) {$/;"	f
+Drupal.behaviors.autocomplete	$DRUPAL_ROOT/misc/autocomplete.js	/^Drupal.behaviors.autocomplete = function (context) {$/;"	f
+Drupal.behaviors.batch	$DRUPAL_ROOT/misc/batch.js	/^Drupal.behaviors.batch = function (context) {$/;"	f
+Drupal.behaviors.blockDrag	$DRUPAL_ROOT/modules/block/block.js	/^Drupal.behaviors.blockDrag = function(context) {$/;"	f
 Drupal.behaviors.blockDrag.checkEmptyRegions	$DRUPAL_ROOT/modules/block/block.js	/^  var checkEmptyRegions = function(table, rowObject) {$/;"	f
-Drupal.behaviors.cleanURLsSettingsCheck	$DRUPAL_ROOT/modules/system/system.js	/^$/;"	f
-Drupal.behaviors.collapse	$DRUPAL_ROOT/misc/collapse.js	/^};$/;"	f
-Drupal.behaviors.color	$DRUPAL_ROOT/modules/color/color.js	/^$/;"	f
+Drupal.behaviors.cleanURLsSettingsCheck	$DRUPAL_ROOT/modules/system/system.js	/^Drupal.behaviors.cleanURLsSettingsCheck = function(context) {$/;"	f
+Drupal.behaviors.collapse	$DRUPAL_ROOT/misc/collapse.js	/^Drupal.behaviors.collapse = function (context) {$/;"	f
+Drupal.behaviors.color	$DRUPAL_ROOT/modules/color/color.js	/^Drupal.behaviors.color = function (context) {$/;"	f
 Drupal.behaviors.color.callback	$DRUPAL_ROOT/modules/color/color.js	/^  function callback(input, color, propagate, colorscheme) {$/;"	f
 Drupal.behaviors.color.focus	$DRUPAL_ROOT/modules/color/color.js	/^  function focus() {$/;"	f
 Drupal.behaviors.color.preview	$DRUPAL_ROOT/modules/color/color.js	/^  function preview() {$/;"	f
 Drupal.behaviors.color.resetScheme	$DRUPAL_ROOT/modules/color/color.js	/^  function resetScheme() {$/;"	f
 Drupal.behaviors.color.shift_color	$DRUPAL_ROOT/modules/color/color.js	/^  function shift_color(given, ref1, ref2) {$/;"	f
-Drupal.behaviors.comment	$DRUPAL_ROOT/modules/comment/comment.js	/^$/;"	f
-Drupal.behaviors.copyFieldValue	$DRUPAL_ROOT/modules/system/system.js	/^};$/;"	f
-Drupal.behaviors.dateTime	$DRUPAL_ROOT/modules/system/system.js	/^};$/;"	f
-Drupal.behaviors.multiselectSelector	$DRUPAL_ROOT/misc/form.js	/^$/;"	f
-Drupal.behaviors.openid	$DRUPAL_ROOT/modules/openid/openid.js	/^$/;"	f
-Drupal.behaviors.password	$DRUPAL_ROOT/modules/user/user.js	/^$/;"	f
-Drupal.behaviors.profileDrag	$DRUPAL_ROOT/modules/profile/profile.js	/^$/;"	f
-Drupal.behaviors.tableDrag	$DRUPAL_ROOT/misc/tabledrag.js	/^$/;"	f
-Drupal.behaviors.tableHeader	$DRUPAL_ROOT/misc/tableheader.js	/^};$/;"	f
+Drupal.behaviors.comment	$DRUPAL_ROOT/modules/comment/comment.js	/^Drupal.behaviors.comment = function (context) {$/;"	f
+Drupal.behaviors.copyFieldValue	$DRUPAL_ROOT/modules/system/system.js	/^Drupal.behaviors.copyFieldValue = function (context) {$/;"	f
+Drupal.behaviors.dateTime	$DRUPAL_ROOT/modules/system/system.js	/^Drupal.behaviors.dateTime = function(context) {$/;"	f
+Drupal.behaviors.multiselectSelector	$DRUPAL_ROOT/misc/form.js	/^Drupal.behaviors.multiselectSelector = function() {$/;"	f
+Drupal.behaviors.openid	$DRUPAL_ROOT/modules/openid/openid.js	/^Drupal.behaviors.openid = function (context) {$/;"	f
+Drupal.behaviors.password	$DRUPAL_ROOT/modules/user/user.js	/^Drupal.behaviors.password = function(context) {$/;"	f
+Drupal.behaviors.profileDrag	$DRUPAL_ROOT/modules/profile/profile.js	/^Drupal.behaviors.profileDrag = function(context) {$/;"	f
+Drupal.behaviors.tableDrag	$DRUPAL_ROOT/misc/tabledrag.js	/^Drupal.behaviors.tableDrag = function(context) {$/;"	f
+Drupal.behaviors.tableHeader	$DRUPAL_ROOT/misc/tableheader.js	/^Drupal.behaviors.tableHeader = function (context) {$/;"	f
 Drupal.behaviors.tableHeader.resize	$DRUPAL_ROOT/misc/tableheader.js	/^  var resize = function () {$/;"	f
 Drupal.behaviors.tableHeader.tracker	$DRUPAL_ROOT/misc/tableheader.js	/^  function tracker(e) {$/;"	f
-Drupal.behaviors.tableSelect	$DRUPAL_ROOT/misc/tableselect.js	/^$/;"	f
-Drupal.behaviors.teaser	$DRUPAL_ROOT/misc/teaser.js	/^$/;"	f
-Drupal.behaviors.termDrag	$DRUPAL_ROOT/modules/taxonomy/taxonomy.js	/^$/;"	f
-Drupal.behaviors.textarea	$DRUPAL_ROOT/misc/textarea.js	/^$/;"	f
-Drupal.behaviors.userSettings	$DRUPAL_ROOT/modules/user/user.js	/^};$/;"	f
-Drupal.checkPlain	$DRUPAL_ROOT/misc/drupal.js	/^};$/;"	f
+Drupal.behaviors.tableSelect	$DRUPAL_ROOT/misc/tableselect.js	/^Drupal.behaviors.tableSelect = function (context) {$/;"	f
+Drupal.behaviors.teaser	$DRUPAL_ROOT/misc/teaser.js	/^Drupal.behaviors.teaser = function(context) {$/;"	f
+Drupal.behaviors.termDrag	$DRUPAL_ROOT/modules/taxonomy/taxonomy.js	/^Drupal.behaviors.termDrag = function(context) {$/;"	f
+Drupal.behaviors.textarea	$DRUPAL_ROOT/misc/textarea.js	/^Drupal.behaviors.textarea = function(context) {$/;"	f
+Drupal.behaviors.userSettings	$DRUPAL_ROOT/modules/user/user.js	/^Drupal.behaviors.userSettings = function (context) {$/;"	f
+Drupal.checkPlain	$DRUPAL_ROOT/misc/drupal.js	/^Drupal.checkPlain = function(str) {$/;"	f
 Drupal.checkPlain.replace."	$DRUPAL_ROOT/misc/drupal.js	/^  var replace = { '&': '&amp;', '"': '&quot;', '<': '&lt;', '>': '&gt;' };$/;"	p
 Drupal.checkPlain.replace.&	$DRUPAL_ROOT/misc/drupal.js	/^  var replace = { '&': '&amp;', '"': '&quot;', '<': '&lt;', '>': '&gt;' };$/;"	p
 Drupal.checkPlain.replace.<	$DRUPAL_ROOT/misc/drupal.js	/^  var replace = { '&': '&amp;', '"': '&quot;', '<': '&lt;', '>': '&gt;' };$/;"	p
 Drupal.checkPlain.replace.>	$DRUPAL_ROOT/misc/drupal.js	/^  var replace = { '&': '&amp;', '"': '&quot;', '<': '&lt;', '>': '&gt;' };$/;"	p
-Drupal.cleanURLsInstallCheck	$DRUPAL_ROOT/modules/system/system.js	/^};$/;"	f
-Drupal.collapseScrollIntoView	$DRUPAL_ROOT/misc/collapse.js	/^};$/;"	f
-Drupal.comment.getCookie	$DRUPAL_ROOT/modules/comment/comment.js	/^Drupal.comment = {};$/;"	f
-Drupal.evaluatePasswordStrength	$DRUPAL_ROOT/modules/user/user.js	/^};$/;"	f
-Drupal.formatPlural	$DRUPAL_ROOT/misc/drupal.js	/^};$/;"	f
-Drupal.freezeHeight	$DRUPAL_ROOT/misc/drupal.js	/^};$/;"	f
-Drupal.jsAC	$DRUPAL_ROOT/misc/autocomplete.js	/^};$/;"	c
+Drupal.cleanURLsInstallCheck	$DRUPAL_ROOT/modules/system/system.js	/^Drupal.cleanURLsInstallCheck = function() {$/;"	f
+Drupal.collapseScrollIntoView	$DRUPAL_ROOT/misc/collapse.js	/^Drupal.collapseScrollIntoView = function (node) {$/;"	f
+Drupal.comment.getCookie	$DRUPAL_ROOT/modules/comment/comment.js	/^Drupal.comment.getCookie = function(name) {$/;"	f
+Drupal.evaluatePasswordStrength	$DRUPAL_ROOT/modules/user/user.js	/^Drupal.evaluatePasswordStrength = function(value) {$/;"	f
+Drupal.formatPlural	$DRUPAL_ROOT/misc/drupal.js	/^Drupal.formatPlural = function(count, singular, plural, args) {$/;"	f
+Drupal.freezeHeight	$DRUPAL_ROOT/misc/drupal.js	/^Drupal.freezeHeight = function () {$/;"	f
+Drupal.jsAC	$DRUPAL_ROOT/misc/autocomplete.js	/^Drupal.jsAC = function (input, db) {$/;"	c
 Drupal.jsAC.found	$DRUPAL_ROOT/misc/autocomplete.js	/^Drupal.jsAC.prototype.found = function (matches) {$/;"	m
 Drupal.jsAC.hidePopup	$DRUPAL_ROOT/misc/autocomplete.js	/^Drupal.jsAC.prototype.hidePopup = function (keycode) {$/;"	m
 Drupal.jsAC.highlight	$DRUPAL_ROOT/misc/autocomplete.js	/^Drupal.jsAC.prototype.highlight = function (node) {$/;"	m
@@ -122,16 +122,16 @@ Drupal.jsAC.selectDown	$DRUPAL_ROOT/misc/autocomplete.js	/^Drupal.jsAC.prototype
 Drupal.jsAC.selectUp	$DRUPAL_ROOT/misc/autocomplete.js	/^Drupal.jsAC.prototype.selectUp = function () {$/;"	m
 Drupal.jsAC.setStatus	$DRUPAL_ROOT/misc/autocomplete.js	/^Drupal.jsAC.prototype.setStatus = function (status) {$/;"	m
 Drupal.jsAC.unhighlight	$DRUPAL_ROOT/misc/autocomplete.js	/^Drupal.jsAC.prototype.unhighlight = function (node) {$/;"	m
-Drupal.parseJson	$DRUPAL_ROOT/misc/drupal.js	/^};$/;"	f
-Drupal.progressBar	$DRUPAL_ROOT/misc/progress.js	/^$/;"	c
+Drupal.parseJson	$DRUPAL_ROOT/misc/drupal.js	/^Drupal.parseJson = function (data) {$/;"	f
+Drupal.progressBar	$DRUPAL_ROOT/misc/progress.js	/^Drupal.progressBar = function (id, updateCallback, method, errorCallback) {$/;"	c
 Drupal.progressBar.displayError	$DRUPAL_ROOT/misc/progress.js	/^Drupal.progressBar.prototype.displayError = function (string) {$/;"	m
 Drupal.progressBar.sendPing	$DRUPAL_ROOT/misc/progress.js	/^Drupal.progressBar.prototype.sendPing = function () {$/;"	m
 Drupal.progressBar.setProgress	$DRUPAL_ROOT/misc/progress.js	/^Drupal.progressBar.prototype.setProgress = function (percentage, message) {$/;"	m
 Drupal.progressBar.startMonitoring	$DRUPAL_ROOT/misc/progress.js	/^Drupal.progressBar.prototype.startMonitoring = function (uri, delay) {$/;"	m
 Drupal.progressBar.stopMonitoring	$DRUPAL_ROOT/misc/progress.js	/^Drupal.progressBar.prototype.stopMonitoring = function () {$/;"	m
-Drupal.setDefaultTimezone	$DRUPAL_ROOT/modules/user/user.js	/^};$/;"	f
-Drupal.t	$DRUPAL_ROOT/misc/drupal.js	/^};$/;"	f
-Drupal.tableDrag	$DRUPAL_ROOT/misc/tabledrag.js	/^};$/;"	c
+Drupal.setDefaultTimezone	$DRUPAL_ROOT/modules/user/user.js	/^Drupal.setDefaultTimezone = function() {$/;"	f
+Drupal.t	$DRUPAL_ROOT/misc/drupal.js	/^Drupal.t = function(str, args) {$/;"	f
+Drupal.tableDrag	$DRUPAL_ROOT/misc/tabledrag.js	/^Drupal.tableDrag = function(table, tableSettings) {$/;"	c
 Drupal.tableDrag.checkScroll	$DRUPAL_ROOT/misc/tabledrag.js	/^Drupal.tableDrag.prototype.checkScroll = function(cursorY) {$/;"	m
 Drupal.tableDrag.copyDragClasses	$DRUPAL_ROOT/misc/tabledrag.js	/^Drupal.tableDrag.prototype.copyDragClasses = function(sourceRow, targetRow, group) {$/;"	m
 Drupal.tableDrag.dragRow	$DRUPAL_ROOT/misc/tabledrag.js	/^Drupal.tableDrag.prototype.dragRow = function(event, self) {$/;"	m
@@ -162,20 +162,20 @@ Drupal.tableDrag.scrollSettings.trigger	$DRUPAL_ROOT/misc/tabledrag.js	/^  this.
 Drupal.tableDrag.setScroll	$DRUPAL_ROOT/misc/tabledrag.js	/^Drupal.tableDrag.prototype.setScroll = function(scrollAmount) {$/;"	m
 Drupal.tableDrag.updateField	$DRUPAL_ROOT/misc/tabledrag.js	/^Drupal.tableDrag.prototype.updateField = function(changedRow, group) {$/;"	m
 Drupal.tableDrag.updateFields	$DRUPAL_ROOT/misc/tabledrag.js	/^Drupal.tableDrag.prototype.updateFields = function(changedRow) {$/;"	m
-Drupal.tableHeaderDoScroll	$DRUPAL_ROOT/misc/tableheader.js	/^$/;"	f
-Drupal.tableHeaderOnScroll	$DRUPAL_ROOT/misc/tableheader.js	/^  }$/;"	f
-Drupal.tableSelect	$DRUPAL_ROOT/misc/tableselect.js	/^};$/;"	f
+Drupal.tableHeaderDoScroll	$DRUPAL_ROOT/misc/tableheader.js	/^Drupal.tableHeaderDoScroll = function() {$/;"	f
+Drupal.tableHeaderOnScroll	$DRUPAL_ROOT/misc/tableheader.js	/^  Drupal.tableHeaderOnScroll = function() {$/;"	f
+Drupal.tableSelect	$DRUPAL_ROOT/misc/tableselect.js	/^Drupal.tableSelect = function() {$/;"	f
 Drupal.tableSelect.strings.selectAll	$DRUPAL_ROOT/misc/tableselect.js	/^  var strings = { 'selectAll': Drupal.t('Select all rows in this table'), 'selectNone': Drupal.t('Deselect all rows in this table') };$/;"	p
 Drupal.tableSelect.updateSelectAll	$DRUPAL_ROOT/misc/tableselect.js	/^  var updateSelectAll = function(state) {$/;"	f
-Drupal.tableSelectRange	$DRUPAL_ROOT/misc/tableselect.js	/^};$/;"	f
-Drupal.theme	$DRUPAL_ROOT/misc/drupal.js	/^};$/;"	f
-Drupal.theme	$DRUPAL_ROOT/misc/tabledrag.js	/^};$/;"	c
+Drupal.tableSelectRange	$DRUPAL_ROOT/misc/tableselect.js	/^Drupal.tableSelectRange = function(from, to, state) {$/;"	f
+Drupal.theme	$DRUPAL_ROOT/misc/drupal.js	/^Drupal.theme = function(func) {$/;"	f
+Drupal.theme	$DRUPAL_ROOT/misc/tabledrag.js	/^Drupal.theme.prototype.tableDragChangedMarker = function () {$/;"	c
 Drupal.theme.tableDragChangedMarker	$DRUPAL_ROOT/misc/tabledrag.js	/^Drupal.theme.prototype.tableDragChangedMarker = function () {$/;"	m
 Drupal.theme.tableDragChangedWarning	$DRUPAL_ROOT/misc/tabledrag.js	/^Drupal.theme.prototype.tableDragChangedWarning = function () {$/;"	m
-Drupal.theme.tableDragChangedWarning	$DRUPAL_ROOT/modules/block/block.js	/^  };$/;"	f
+Drupal.theme.tableDragChangedWarning	$DRUPAL_ROOT/modules/block/block.js	/^  Drupal.theme.tableDragChangedWarning = function () {$/;"	f
 Drupal.theme.tableDragIndentation	$DRUPAL_ROOT/misc/tabledrag.js	/^Drupal.theme.prototype.tableDragIndentation = function () {$/;"	m
-Drupal.toggleFieldset	$DRUPAL_ROOT/misc/collapse.js	/^$/;"	f
-Drupal.unfreezeHeight	$DRUPAL_ROOT/misc/drupal.js	/^};$/;"	f
+Drupal.toggleFieldset	$DRUPAL_ROOT/misc/collapse.js	/^Drupal.toggleFieldset = function(fieldset) {$/;"	f
+Drupal.unfreezeHeight	$DRUPAL_ROOT/misc/drupal.js	/^Drupal.unfreezeHeight = function () {$/;"	f
 EMAIL_MAX_LENGTH	$DRUPAL_ROOT/modules/user/user.module	/^define('EMAIL_MAX_LENGTH', 64);$/;"	d
 E_DEPRECATED	$DRUPAL_ROOT/includes/common.inc	/^  define('E_DEPRECATED', 8192);$/;"	d
 FILE_CREATE_DIRECTORY	$DRUPAL_ROOT/includes/file.inc	/^define('FILE_CREATE_DIRECTORY', 1);$/;"	d
@@ -279,22 +279,7 @@ UPDATE_NOT_SUPPORTED	$DRUPAL_ROOT/modules/update/update.module	/^define('UPDATE_
 UPDATE_REVOKED	$DRUPAL_ROOT/modules/update/update.module	/^define('UPDATE_REVOKED', 2);$/;"	d
 UPDATE_UNKNOWN	$DRUPAL_ROOT/modules/update/update.module	/^define('UPDATE_UNKNOWN', -2);$/;"	d
 USERNAME_MAX_LENGTH	$DRUPAL_ROOT/modules/user/user.module	/^define('USERNAME_MAX_LENGTH', 60);$/;"	d
-UserRolesAssignmentTestCase-1.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-1.html	1;"	F
-UserRolesAssignmentTestCase-10.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-10.html	1;"	F
-UserRolesAssignmentTestCase-11.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-11.html	1;"	F
-UserRolesAssignmentTestCase-12.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-12.html	1;"	F
-UserRolesAssignmentTestCase-13.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-13.html	1;"	F
-UserRolesAssignmentTestCase-14.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-14.html	1;"	F
-UserRolesAssignmentTestCase-15.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-15.html	1;"	F
-UserRolesAssignmentTestCase-2.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-2.html	1;"	F
-UserRolesAssignmentTestCase-3.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-3.html	1;"	F
-UserRolesAssignmentTestCase-4.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-4.html	1;"	F
-UserRolesAssignmentTestCase-5.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-5.html	1;"	F
-UserRolesAssignmentTestCase-6.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-6.html	1;"	F
-UserRolesAssignmentTestCase-7.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-7.html	1;"	F
-UserRolesAssignmentTestCase-8.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-8.html	1;"	F
-UserRolesAssignmentTestCase-9.html	$DRUPAL_ROOT/sites/d7test.local/files/simpletest/verbose/UserRolesAssignmentTestCase-9.html	1;"	F
-VERSION	$DRUPAL_ROOT/modules/system/system.module	/^define('VERSION', '6.34');$/;"	d
+VERSION	$DRUPAL_ROOT/modules/system/system.module	/^define('VERSION', '6.35');$/;"	d
 WATCHDOG_ALERT	$DRUPAL_ROOT/includes/bootstrap.inc	/^define('WATCHDOG_ALERT', 1);$/;"	d
 WATCHDOG_CRITICAL	$DRUPAL_ROOT/includes/bootstrap.inc	/^define('WATCHDOG_CRITICAL', 2);$/;"	d
 WATCHDOG_DEBUG	$DRUPAL_ROOT/includes/bootstrap.inc	/^define('WATCHDOG_DEBUG', 7);$/;"	d
@@ -668,7 +653,6 @@ and	$DRUPAL_ROOT/includes/theme.inc	/^      \/\/ if function and file are left o
 and	$DRUPAL_ROOT/includes/theme.inc	/^    \/\/ default render function and extension.$/;"	f
 and	$DRUPAL_ROOT/modules/locale/locale.module	/^    'description' => 'Translate the built in interface and optionally other text.',$/;"	i
 and	$DRUPAL_ROOT/modules/translation/translation.module	/^      $output .= '<p>'. t('Use the <a href="@blocks">language switcher block<\/a> provided by locale module to allow users to select a language. If available, both the site interface and site content are presented in the language selected.', array('@blocks' => url('admin\/build\/block'))) .'<\/p>';$/;"	i
-and	$DRUPAL_ROOT/sites/d7test.local/settings.php	/^ * block IP addresses from within the administrative interface and before any$/;"	i
 are	$DRUPAL_ROOT/modules/update/update.compare.inc	/^ * The results of this function are expensive to compute, especially on sites$/;"	f
 arg	$DRUPAL_ROOT/includes/path.inc	/^function arg($index = NULL, $path = NULL) {$/;"	f
 arguments	$DRUPAL_ROOT/includes/form.inc	/^  \/\/ We store the original function arguments, rather than the final $arg$/;"	f
@@ -851,6 +835,7 @@ cache_set	$DRUPAL_ROOT/includes/cache.inc	/^function cache_set($cid, $data, $tab
 call	$DRUPAL_ROOT/includes/actions.inc	/^ * using the function call $function($object, $context, $a1, $a2)$/;"	f
 call	$DRUPAL_ROOT/includes/batch.inc	/^      \/\/ Build the 'context' array, execute the function call,$/;"	f
 call	$DRUPAL_ROOT/includes/bootstrap.inc	/^  \/\/ function call, since check_plain() may be called hundreds of times during$/;"	f
+call	$DRUPAL_ROOT/includes/common.inc	/^  \/\/ another function call, since performance inside url() is critical.$/;"	f
 call	$DRUPAL_ROOT/includes/common.inc	/^ *   A float representing the maximum number of seconds the function call may$/;"	f
 callback	$DRUPAL_ROOT/modules/book/book.module	/^ *   A function callback to be called upon visiting a node in the tree.$/;"	f
 calls	$DRUPAL_ROOT/includes/form.inc	/^ *   - 'operations': Array of function calls to be performed.$/;"	f
@@ -1205,7 +1190,9 @@ drupal_get_schema_versions	$DRUPAL_ROOT/includes/install.inc	/^function drupal_g
 drupal_get_title	$DRUPAL_ROOT/includes/path.inc	/^function drupal_get_title() {$/;"	f
 drupal_get_token	$DRUPAL_ROOT/includes/common.inc	/^function drupal_get_token($value = '') {$/;"	f
 drupal_goto	$DRUPAL_ROOT/includes/common.inc	/^function drupal_goto($path = '', $query = NULL, $fragment = NULL, $http_response_code = 302) {$/;"	f
+drupal_hash_hmac_sha1	$DRUPAL_ROOT/includes/bootstrap.inc	/^function drupal_hash_hmac_sha1($data, $key) {$/;"	f
 drupal_help_arg	$DRUPAL_ROOT/includes/menu.inc	/^function drupal_help_arg($arg = array()) {$/;"	f
+drupal_hmac_base64	$DRUPAL_ROOT/includes/bootstrap.inc	/^function drupal_hmac_base64($data, $key) {$/;"	f
 drupal_html_to_text	$DRUPAL_ROOT/includes/mail.inc	/^function drupal_html_to_text($string, $allowed_tags = NULL) {$/;"	f
 drupal_http_request	$DRUPAL_ROOT/includes/common.inc	/^function drupal_http_request($url, $headers = array(), $method = 'GET', $data = NULL, $retry = 3, $timeout = 30.0) {$/;"	f
 drupal_implode_tags	$DRUPAL_ROOT/includes/common.inc	/^function drupal_implode_tags($tags) {$/;"	f
@@ -1291,6 +1278,7 @@ end	$DRUPAL_ROOT/modules/update/update.fetch.inc	/^  function end($parser, $name
 ends	$DRUPAL_ROOT/includes/common.inc	/^ * This function ends the request; use it rather than a print theme('page')$/;"	f
 ensures	$DRUPAL_ROOT/includes/common.inc	/^ * This function ensures that the string is pluralized correctly. Since t() is$/;"	f
 examine	$DRUPAL_ROOT/includes/form.inc	/^      \/\/ however, we'll skip this and let the calling function examine$/;"	f
+example.info.yml	$DRUPAL_ROOT/modules/example/example.info.yml	1;"	F
 example_mail	$DRUPAL_ROOT/includes/mail.inc	/^ *   function example_mail($key, &$message, $params) {$/;"	f
 example_notify	$DRUPAL_ROOT/includes/mail.inc	/^ *   function example_notify($accounts) {$/;"	f
 example_potx	$DRUPAL_ROOT/includes/common.inc	/^ *   function example_potx() {$/;"	f
@@ -1306,20 +1294,20 @@ extracts	$DRUPAL_ROOT/includes/database.inc	/^ * specification, this function ex
 fails	$DRUPAL_ROOT/includes/lock.inc	/^ * If a function fails to acquire a lock it may either immediately return, or$/;"	f
 falls	$DRUPAL_ROOT/includes/form.inc	/^ * first. If none exist, the function falls back to form-level handlers.$/;"	f
 farbtastic.js	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	1;"	F
-fb.HSLToRGB	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  };$/;"	f
-fb.RGBToHSL	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  };$/;"	f
-fb.hueToRGB	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  };$/;"	f
-fb.linkTo	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  }$/;"	f
-fb.mousedown	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  };$/;"	f
-fb.mousemove	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  };$/;"	f
-fb.mouseup	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  };$/;"	f
-fb.pack	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  };$/;"	f
-fb.setColor	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  };$/;"	f
-fb.setHSL	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  };$/;"	f
-fb.unpack	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  };$/;"	f
-fb.updateDisplay	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  };$/;"	f
-fb.updateValue	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  };$/;"	f
-fb.widgetCoords	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  };$/;"	f
+fb.HSLToRGB	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.HSLToRGB = function (hsl) {$/;"	f
+fb.RGBToHSL	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.RGBToHSL = function (rgb) {$/;"	f
+fb.hueToRGB	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.hueToRGB = function (m1, m2, h) {$/;"	f
+fb.linkTo	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.linkTo = function (callback) {$/;"	f
+fb.mousedown	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.mousedown = function (event) {$/;"	f
+fb.mousemove	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.mousemove = function (event) {$/;"	f
+fb.mouseup	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.mouseup = function () {$/;"	f
+fb.pack	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.pack = function (rgb) {$/;"	f
+fb.setColor	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.setColor = function (color) {$/;"	f
+fb.setHSL	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.setHSL = function (hsl) {$/;"	f
+fb.unpack	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.unpack = function (color) {$/;"	f
+fb.updateDisplay	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.updateDisplay = function () {$/;"	f
+fb.updateValue	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.updateValue = function (event) {$/;"	f
+fb.widgetCoords	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^  fb.widgetCoords = function (event) {$/;"	f
 fb.widgetCoords.offset.x	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^    var offset = { x: 0, y: 0 };$/;"	p
 fb.widgetCoords.offset.y	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^    var offset = { x: 0, y: 0 };$/;"	p
 fb.widgetCoords.pos.x	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^    var pos = { x: event.offsetX, y: event.offsetY };$/;"	p
@@ -1568,6 +1556,7 @@ help_menu	$DRUPAL_ROOT/modules/help/help.module	/^function help_menu() {$/;"	f
 help_page	$DRUPAL_ROOT/modules/help/help.admin.inc	/^function help_page($name) {$/;"	f
 helps	$DRUPAL_ROOT/includes/common.inc	/^ * page using drupal_add_js() directly, this function helps keep template files$/;"	f
 hinges	$DRUPAL_ROOT/includes/file.inc	/^ * The return value of this function hinges on the return value from$/;"	f
+if	$DRUPAL_ROOT/includes/bootstrap.inc	/^  \/\/ results of the hash function if they are not scalar values. As this$/;"	f
 if	$DRUPAL_ROOT/includes/common.inc	/^ * internal links output by modules should be generated by this function if$/;"	f
 if	$DRUPAL_ROOT/includes/database.mysql.inc	/^ * Only use this function if exactly one field is being selected; otherwise,$/;"	f
 if	$DRUPAL_ROOT/includes/database.mysqli.inc	/^ * Only use this function if exactly one field is being selected; otherwise,$/;"	f
@@ -1633,6 +1622,7 @@ install_verify_settings	$DRUPAL_ROOT/install.php	/^function install_verify_setti
 int2vancode	$DRUPAL_ROOT/modules/comment/comment.module	/^function int2vancode($i = 0) {$/;"	f
 ip_address	$DRUPAL_ROOT/includes/bootstrap.inc	/^function ip_address() {$/;"	f
 is	$DRUPAL_ROOT/includes/bootstrap.inc	/^  \/\/ Because this function is called for every page request, both cached$/;"	f
+is	$DRUPAL_ROOT/includes/bootstrap.inc	/^  \/\/ function is used in security-critical contexts like token validation it is$/;"	f
 is	$DRUPAL_ROOT/includes/bootstrap.inc	/^  \/\/ the database.  This is required because this function is called both$/;"	f
 is	$DRUPAL_ROOT/includes/bootstrap.inc	/^ * If the function is called with no arguments, this function returns all set$/;"	f
 is	$DRUPAL_ROOT/includes/bootstrap.inc	/^ * This function is better than simply calling mt_rand() or any other built-in$/;"	f
@@ -1689,11 +1679,11 @@ it	$DRUPAL_ROOT/includes/database.mysql-common.inc	/^ * Before passing a field o
 it	$DRUPAL_ROOT/includes/database.pgsql.inc	/^ * Before passing a field out of a schema definition into this function it has$/;"	f
 it	$DRUPAL_ROOT/includes/theme.inc	/^ * if it is a function it must be specified via hook_theme(). By convention,$/;"	f
 itself	$DRUPAL_ROOT/includes/form.inc	/^  \/\/ the constructor function itself. We shift out the first argument -- the$/;"	f
-jQuery._farbtastic	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^};$/;"	f
-jQuery.farbtastic	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^};$/;"	f
-jQuery.fn.farbtastic	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^\/\/ Farbtastic 1.2$/;"	f
-jQuery.fn.init	$DRUPAL_ROOT/misc/drupal.js	/^  var jquery_init = jQuery.fn.init;$/;"	f
-jQuery.fn.init	$DRUPAL_ROOT/misc/drupal.js	/^  };$/;"	c
+jQuery._farbtastic	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^jQuery._farbtastic = function (container, callback) {$/;"	f
+jQuery.farbtastic	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^jQuery.farbtastic = function (container, callback) {$/;"	f
+jQuery.fn.farbtastic	$DRUPAL_ROOT/misc/farbtastic/farbtastic.js	/^jQuery.fn.farbtastic = function (callback) {$/;"	f
+jQuery.fn.init	$DRUPAL_ROOT/misc/drupal.js	/^  jQuery.fn.init = function (selector, context, rootjQuery) {$/;"	f
+jQuery.fn.init	$DRUPAL_ROOT/misc/drupal.js	/^  jQuery.fn.init.prototype = jquery_init.prototype;$/;"	c
 jquery.form.js	$DRUPAL_ROOT/misc/jquery.form.js	1;"	F
 jquery.js	$DRUPAL_ROOT/misc/jquery.js	1;"	F
 just	$DRUPAL_ROOT/includes/menu.inc	/^ * Local tasks function just as other menu items in most respects. It is$/;"	f
@@ -1903,6 +1893,13 @@ must	$DRUPAL_ROOT/includes/menu.inc	/^              \/\/ Pass on menu map by ref
 my_function_1	$DRUPAL_ROOT/includes/form.inc	/^ * function my_function_1($uid, $type, &$context) {$/;"	f
 my_function_2	$DRUPAL_ROOT/includes/form.inc	/^ * function my_function_2(&$context) {$/;"	f
 mymodule_long_operation	$DRUPAL_ROOT/includes/lock.inc	/^ * function mymodule_long_operation() {$/;"	f
+mynodeaccess.info.yml	$DRUPAL_ROOT/modules/mynodeaccess/mynodeaccess.info.yml	1;"	F
+mynodeaccess.module	$DRUPAL_ROOT/modules/mynodeaccess/mynodeaccess.module	1;"	F
+mynodeaccess.permissions.yml	$DRUPAL_ROOT/modules/mynodeaccess/mynodeaccess.permissions.yml	1;"	F
+mynodeaccess_add_field	$DRUPAL_ROOT/modules/mynodeaccess/mynodeaccess.module	/^function mynodeaccess_add_field(NodeTypeInterface $type) {$/;"	f
+mynodeaccess_node_access	$DRUPAL_ROOT/modules/mynodeaccess/mynodeaccess.module	/^function mynodeaccess_node_access(\\Drupal\\node\\NodeInterface $node, $op, \\Drupal\\Core\\Session\\AccountInterface $account, $langcode) {$/;"	f
+mynodeaccess_node_access_records	$DRUPAL_ROOT/modules/mynodeaccess/mynodeaccess.module	/^function mynodeaccess_node_access_records(NodeInterface $node) {$/;"	f
+mynodeaccess_node_grants	$DRUPAL_ROOT/modules/mynodeaccess/mynodeaccess.module	/^function mynodeaccess_node_grants($account, $op) {$/;"	f
 mysql_is_available	$DRUPAL_ROOT/includes/install.mysql.inc	/^function mysql_is_available() {$/;"	f
 mysqli_is_available	$DRUPAL_ROOT/includes/install.mysqli.inc	/^function mysqli_is_available() {$/;"	f
 name	$DRUPAL_ROOT/includes/actions.inc	/^      \/\/ Singleton action; $action_id is the function name.$/;"	f
@@ -2318,7 +2315,6 @@ session_save_session	$DRUPAL_ROOT/includes/session.inc	/^function session_save_s
 sets	$DRUPAL_ROOT/includes/common.inc	/^ * This function sets the page cache if appropriate, and allows modules to$/;"	f
 sets	$DRUPAL_ROOT/includes/locale.inc	/^ * This function sets a refresh flag for a specified language, or all$/;"	f
 sets	$DRUPAL_ROOT/modules/system/system.module	/^ * The function sets the drupal_http_request_fail system variable to TRUE if$/;"	f
-settings.php	$DRUPAL_ROOT/sites/d7test.local/settings.php	1;"	F
 should	$DRUPAL_ROOT/includes/actions.inc	/^ * each action function should reference its configuration form, validate, and$/;"	f
 should	$DRUPAL_ROOT/includes/common.inc	/^ * - This function should only be used on paths, not on query string arguments,$/;"	f
 should	$DRUPAL_ROOT/includes/common.inc	/^ * Please note that this function should be called from the theme layer, such as$/;"	f
@@ -2330,6 +2326,7 @@ should	$DRUPAL_ROOT/includes/menu.inc	/^ * This function should never be called 
 should	$DRUPAL_ROOT/includes/menu.inc	/^ * account on user\/5 etc. Note - this function should never be called within a$/;"	f
 should	$DRUPAL_ROOT/includes/theme.inc	/^ *   This function should only be implemented by theme engines and exists$/;"	f
 should	$DRUPAL_ROOT/includes/unicode.inc	/^ * the XML data first and sets the output encoding to UTF-8. This function should$/;"	f
+since	$DRUPAL_ROOT/includes/bootstrap.inc	/^ * that function since PHP can be missing it if it was compiled with the$/;"	f
 so	$DRUPAL_ROOT/includes/install.inc	/^ *   The name of the file calling this function so we can strip it out of$/;"	f
 so	$DRUPAL_ROOT/modules/user/user.admin.inc	/^  \/\/ the settings on page load via .css using the js-hide class so$/;"	c
 st	$DRUPAL_ROOT/includes/install.inc	/^function st($string, $args = array()) {$/;"	f
@@ -2363,7 +2360,6 @@ statistics_update_6000	$DRUPAL_ROOT/modules/statistics/statistics.install	/^func
 statistics_user	$DRUPAL_ROOT/modules/statistics/statistics.module	/^function statistics_user($op, &$edit, &$user) {$/;"	f
 statistics_user_tracker	$DRUPAL_ROOT/modules/statistics/statistics.pages.inc	/^function statistics_user_tracker() {$/;"	f
 strings	$DRUPAL_ROOT/includes/common.inc	/^ *    inaccurate since it is a mix of actual interface strings and various user$/;"	i
-strings	$DRUPAL_ROOT/sites/d7test.local/settings.php	/^ * a small number of your site's default English language interface strings.$/;"	i
 strings	$DRUPAL_ROOT/sites/default/default.settings.php	/^ * a small number of your site's default English language interface strings.$/;"	i
 syslog.install	$DRUPAL_ROOT/modules/syslog/syslog.install	1;"	F
 syslog.module	$DRUPAL_ROOT/modules/syslog/syslog.module	1;"	F
@@ -2529,11 +2525,11 @@ system_update_6055	$DRUPAL_ROOT/modules/system/system.install	/^function system_
 system_update_last_removed	$DRUPAL_ROOT/modules/system/system.install	/^function system_update_last_removed() {$/;"	f
 system_user	$DRUPAL_ROOT/modules/system/system.module	/^function system_user($type, $edit, &$user, $category = NULL) {$/;"	f
 t	$DRUPAL_ROOT/includes/common.inc	/^function t($string, $args = array(), $langcode = NULL) {$/;"	f
-tableDrag.onDrop	$DRUPAL_ROOT/modules/block/block.js	/^  };$/;"	f
-tableDrag.onDrop	$DRUPAL_ROOT/modules/profile/profile.js	/^  };$/;"	f
-tableDrag.row	$DRUPAL_ROOT/modules/block/block.js	/^  var tableDrag = Drupal.tableDrag.blocks; \/\/ Get the blocks tableDrag object.$/;"	c
-tableDrag.row	$DRUPAL_ROOT/modules/profile/profile.js	/^  var tableDrag = Drupal.tableDrag['profile-fields']; \/\/ Get the profile tableDrag object.$/;"	c
-tableDrag.row	$DRUPAL_ROOT/modules/taxonomy/taxonomy.js	/^  var rows = $('tr', table).size();$/;"	c
+tableDrag.onDrop	$DRUPAL_ROOT/modules/block/block.js	/^  tableDrag.onDrop = function() {$/;"	f
+tableDrag.onDrop	$DRUPAL_ROOT/modules/profile/profile.js	/^  tableDrag.onDrop = function() {$/;"	f
+tableDrag.row	$DRUPAL_ROOT/modules/block/block.js	/^  tableDrag.row.prototype.onSwap = function(swappedRow) {$/;"	c
+tableDrag.row	$DRUPAL_ROOT/modules/profile/profile.js	/^  tableDrag.row.prototype.onSwap = function(swappedRow) {$/;"	c
+tableDrag.row	$DRUPAL_ROOT/modules/taxonomy/taxonomy.js	/^  tableDrag.row.prototype.onSwap = function(swappedRow) {$/;"	c
 tableDrag.row.onSwap	$DRUPAL_ROOT/modules/block/block.js	/^  tableDrag.row.prototype.onSwap = function(swappedRow) {$/;"	m
 tableDrag.row.onSwap	$DRUPAL_ROOT/modules/profile/profile.js	/^  tableDrag.row.prototype.onSwap = function(swappedRow) {$/;"	m
 tableDrag.row.onSwap	$DRUPAL_ROOT/modules/taxonomy/taxonomy.js	/^  tableDrag.row.prototype.onSwap = function(swappedRow) {$/;"	m
@@ -3096,7 +3092,7 @@ user_multiple_role_edit	$DRUPAL_ROOT/modules/user/user.module	/^function user_mu
 user_page	$DRUPAL_ROOT/modules/user/user.pages.inc	/^function user_page() {$/;"	f
 user_page_title	$DRUPAL_ROOT/modules/user/user.module	/^function user_page_title($account) {$/;"	f
 user_pass	$DRUPAL_ROOT/modules/user/user.pages.inc	/^function user_pass() {$/;"	f
-user_pass_rehash	$DRUPAL_ROOT/modules/user/user.module	/^function user_pass_rehash($password, $timestamp, $login) {$/;"	f
+user_pass_rehash	$DRUPAL_ROOT/modules/user/user.module	/^function user_pass_rehash($password, $timestamp, $login, $uid) {$/;"	f
 user_pass_reset	$DRUPAL_ROOT/modules/user/user.pages.inc	/^function user_pass_reset(&$form_state, $uid, $timestamp, $hashed_pass, $action = NULL) {$/;"	f
 user_pass_reset_url	$DRUPAL_ROOT/modules/user/user.module	/^function user_pass_reset_url($account) {$/;"	f
 user_pass_submit	$DRUPAL_ROOT/modules/user/user.pages.inc	/^function user_pass_submit($form, &$form_state) {$/;"	f
